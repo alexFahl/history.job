@@ -2,7 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../store/authStore";
 import useUiStore from "../store/uiStore";
-import { useProfiles, useCreateProfile } from "../hooks/useProfiles";
+import {
+  useProfiles,
+  useCreateProfile,
+  useDeleteProfile,
+} from "../hooks/useProfiles";
 import { profileSchema } from "../schemas/profileSchema";
 import { getCountryList, getTimezoneForCountry } from "../utils/timezones";
 import Modal from "../components/common/Modal";
@@ -25,14 +29,22 @@ function ProfileSelector() {
   const clearAuth = useAuthStore((state) => state.clearAuth);
   const user = useAuthStore((state) => state.user);
   const setSelectedProfile = useUiStore((state) => state.setSelectedProfile);
+  const selectedProfile = useUiStore((state) => state.selectedProfile);
+  const clearSelectedProfile = useUiStore(
+    (state) => state.clearSelectedProfile,
+  );
 
   const { data: profiles, isLoading, isError } = useProfiles();
   const createProfileMutation = useCreateProfile();
+  const deleteProfileMutation = useDeleteProfile();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [profileName, setProfileName] = useState("");
   const [country, setCountry] = useState("");
   const [formError, setFormError] = useState("");
+
+  const [profileToDelete, setProfileToDelete] = useState(null);
+  const [deleteError, setDeleteError] = useState("");
 
   const handleSelectProfile = (profile) => {
     setSelectedProfile(profile);
@@ -53,6 +65,37 @@ function ProfileSelector() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     resetForm();
+  };
+
+  const handleRequestDelete = (e, profile) => {
+    e.stopPropagation();
+    setDeleteError("");
+    setProfileToDelete(profile);
+  };
+
+  const handleCancelDelete = () => {
+    setProfileToDelete(null);
+    setDeleteError("");
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!profileToDelete) return;
+    setDeleteError("");
+
+    try {
+      await deleteProfileMutation.mutateAsync(profileToDelete._id);
+      // Clear the selected profile if it's the one that was just deleted,
+      // so the Dashboard doesn't keep pointing at a profile that no longer exists
+      if (selectedProfile?._id === profileToDelete._id) {
+        clearSelectedProfile();
+      }
+      setProfileToDelete(null);
+    } catch (err) {
+      setDeleteError(
+        err.response?.data?.message ||
+          "Failed to delete profile. Please try again.",
+      );
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -118,15 +161,40 @@ function ProfileSelector() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {/* Existing profile cards */}
             {profiles.map((profile) => (
-              <button
+              <div
                 key={profile._id}
-                type="button"
+                role="button"
+                tabIndex={0}
                 onClick={() => handleSelectProfile(profile)}
-                className="text-left bg-white/[0.04] hover:bg-white/[0.08] border border-white/10
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSelectProfile(profile);
+                }}
+                className="relative text-left bg-white/[0.04] hover:bg-white/[0.08] border border-white/10
                            hover:border-primary/50 rounded-2xl p-6 transition-all duration-200
-                           group"
+                           group cursor-pointer"
               >
-                <div className="flex items-start justify-between mb-4">
+                <button
+                  type="button"
+                  onClick={(e) => handleRequestDelete(e, profile)}
+                  aria-label={`Delete profile ${profile.profileName}`}
+                  className="absolute top-4 right-4 text-secondary hover:text-accent
+                             transition-colors duration-150 p-1 rounded-lg hover:bg-white/[0.06]"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    className="w-4 h-4"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M8.75 1a.75.75 0 0 0-.75.75V2h-3.5a.75.75 0 0 0 0 1.5h.564l.62 10.548A2.75 2.75 0 0 0 8.427 17h3.146a2.75 2.75 0 0 0 2.743-2.952l.62-10.548h.564a.75.75 0 0 0 0-1.5h-3.5v-.25a.75.75 0 0 0-.75-.75h-2.5ZM8.5 6.75a.75.75 0 0 1 1.5 0v6.5a.75.75 0 0 1-1.5 0v-6.5Zm3.75-.75a.75.75 0 0 0-.75.75v6.5a.75.75 0 0 0 1.5 0v-6.5a.75.75 0 0 0-.75-.75Z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+
+                <div className="flex items-start justify-between mb-4 pr-6">
                   <div>
                     <h3 className="text-lg font-semibold text-text group-hover:text-primary transition-colors">
                       {profile.profileName}
@@ -148,7 +216,7 @@ function ProfileSelector() {
                   <span className="text-white/30">·</span>
                   <span className="text-xs">{profile.timezone}</span>
                 </div>
-              </button>
+              </div>
             ))}
 
             {/* Add new profile card */}
@@ -236,6 +304,56 @@ function ProfileSelector() {
             {createProfileMutation.isPending ? "Creating…" : "Create profile"}
           </button>
         </form>
+      </Modal>
+
+      {/* Delete Profile confirmation Modal */}
+      <Modal
+        isOpen={!!profileToDelete}
+        onClose={handleCancelDelete}
+        title="Delete profile"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-text">
+            Are you sure you want to delete{" "}
+            <span className="font-semibold">
+              {profileToDelete?.profileName}
+            </span>
+            ?
+          </p>
+
+          <p className="text-accent text-sm bg-accent/10 border border-accent/20 rounded-lg px-4 py-2.5">
+            Warning: all applications for this profile will also be deleted,
+            including any uploaded CVs and cover letters. This action cannot be
+            undone.
+          </p>
+
+          {deleteError && (
+            <p className="text-accent text-sm bg-accent/10 border border-accent/20 rounded-lg px-4 py-2.5">
+              {deleteError}
+            </p>
+          )}
+
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={handleCancelDelete}
+              className="flex-1 bg-white/[0.06] hover:bg-white/[0.1] text-text text-sm
+                         font-semibold py-2.5 rounded-lg transition-colors duration-200"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirmDelete}
+              disabled={deleteProfileMutation.isPending}
+              className="flex-1 bg-accent hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed
+                         text-white font-semibold py-2.5 rounded-lg text-sm
+                         transition-all duration-200"
+            >
+              {deleteProfileMutation.isPending ? "Deleting…" : "Delete profile"}
+            </button>
+          </div>
+        </div>
       </Modal>
     </div>
   );

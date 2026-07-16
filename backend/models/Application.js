@@ -36,6 +36,7 @@ const followUpSchema = new mongoose.Schema({
 
 const replySchema = new mongoose.Schema({
   date: { type: Date, required: [true, "Reply date is required"] },
+  note: { type: String, trim: true },
   communicationChannel: {
     type: String,
     enum: {
@@ -88,10 +89,14 @@ const applicationSchema = new mongoose.Schema(
 
     notes: { type: String },
 
-    // Documents (Cloudinary URLs)
+    // Documents (Cloudinary URLs).
+    // The "PublicId" fields store Cloudinary's internal file identifier —
+    // required to delete the file from Cloudinary storage later (see deleteDocument).
     documents: {
       cvUrl: { type: String },
+      cvPublicId: { type: String },
       coverLetterUrl: { type: String },
+      coverLetterPublicId: { type: String },
     },
   },
   {

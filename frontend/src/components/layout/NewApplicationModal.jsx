@@ -10,21 +10,32 @@ import { useCreateApplication } from "../../hooks/useApplications";
  *   onClose   : function — called to close the modal
  *   profileId : string — the currently selected profile, attached to the new application
  */
+// Returns today's date as "YYYY-MM-DD", the format required by <input type="date">
+const getToday = () => new Date().toISOString().slice(0, 10);
+
 function NewApplicationModal({ isOpen, onClose, profileId }) {
   const createApplicationMutation = useCreateApplication(profileId);
 
   const [companyName, setCompanyName] = useState("");
   const [jobTitle, setJobTitle] = useState("");
+  const [location, setLocation] = useState("");
   const [jobAdUrl, setJobAdUrl] = useState("");
   const [jobType, setJobType] = useState("");
+  const [salaryExpected, setSalaryExpected] = useState("");
+  const [currency, setCurrency] = useState("€");
+  const [appliedDate, setAppliedDate] = useState(getToday);
   const [status, setStatus] = useState("T"); // Default to "To Apply"
   const [error, setError] = useState("");
 
   const resetForm = () => {
     setCompanyName("");
     setJobTitle("");
+    setLocation("");
     setJobAdUrl("");
     setJobType("");
+    setSalaryExpected("");
+    setCurrency("€");
+    setAppliedDate(getToday());
     setStatus("T");
     setError("");
   };
@@ -42,8 +53,12 @@ function NewApplicationModal({ isOpen, onClose, profileId }) {
       profileId,
       companyName,
       jobTitle,
+      location: location || undefined,
       jobAdUrl: jobAdUrl || undefined,
       jobType: jobType || undefined,
+      salaryExpected: salaryExpected || undefined,
+      currency: currency || undefined,
+      appliedDate: appliedDate || undefined,
       status,
     };
 
@@ -110,6 +125,26 @@ function NewApplicationModal({ isOpen, onClose, profileId }) {
 
         <div>
           <label
+            htmlFor="location"
+            className="block text-sm font-medium text-secondary mb-1.5"
+          >
+            Location
+          </label>
+          <input
+            id="location"
+            type="text"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder="e.g. Paris, France"
+            className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-2.5
+                       text-text placeholder-white/20 text-sm
+                       focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
+                       transition-colors duration-200"
+          />
+        </div>
+
+        <div>
+          <label
             htmlFor="jobAdUrl"
             className="block text-sm font-medium text-secondary mb-1.5"
           >
@@ -126,6 +161,60 @@ function NewApplicationModal({ isOpen, onClose, profileId }) {
                        focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
                        transition-colors duration-200"
           />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label
+              htmlFor="salaryExpected"
+              className="block text-sm font-medium text-secondary mb-1.5"
+            >
+              Salary expected
+            </label>
+            <div className="flex gap-2">
+              <input
+                id="salaryExpected"
+                type="text"
+                value={salaryExpected}
+                onChange={(e) => setSalaryExpected(e.target.value)}
+                placeholder="e.g. 55000"
+                className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-2.5
+                           text-text placeholder-white/20 text-sm
+                           focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
+                           transition-colors duration-200"
+              />
+              <input
+                type="text"
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+                placeholder="€"
+                aria-label="Currency"
+                className="w-14 shrink-0 bg-white/[0.06] border border-white/10 rounded-lg px-2 py-2.5
+                           text-text text-center placeholder-white/20 text-sm
+                           focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
+                           transition-colors duration-200"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor="appliedDate"
+              className="block text-sm font-medium text-secondary mb-1.5"
+            >
+              Applied on
+            </label>
+            <input
+              id="appliedDate"
+              type="date"
+              value={appliedDate}
+              onChange={(e) => setAppliedDate(e.target.value)}
+              className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-2.5
+                         text-text text-sm
+                         focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
+                         transition-colors duration-200"
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">

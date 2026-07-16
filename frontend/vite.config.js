@@ -6,9 +6,9 @@ export default defineConfig({
   plugins: [react()],
   server: {
     watch: {
-      usePolling: true, // Force Docker à vérifier les modifications
+      usePolling: true,
     },
-    host: true, // Nécessaire pour que Docker expose le réseau proprement
+    host: true,
     strictPort: true,
     port: 5173,
   },

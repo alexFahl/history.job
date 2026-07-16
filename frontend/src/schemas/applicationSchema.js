@@ -10,4 +10,8 @@ export const applicationSchema = z.object({
   jobAdUrl: z.string().optional(),
   jobType: z.enum(["C", "H", "R"]).optional(),
   status: z.enum(["T", "A", "I", "R", "O"]).optional(),
+  location: z.string().optional(),
+  salaryExpected: z.string().optional(),
+  currency: z.string().optional(),
+  appliedDate: z.string().optional(),
 });

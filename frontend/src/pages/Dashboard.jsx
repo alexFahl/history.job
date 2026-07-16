@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useUiStore from "../store/uiStore";
 import { useApplications } from "../hooks/useApplications";
@@ -18,9 +18,14 @@ function Dashboard() {
     isError,
   } = useApplications(selectedProfile?._id);
 
-  // Guard: no profile selected
+  // Guard: no profile selected — redirect back to the selector
+  useEffect(() => {
+    if (!selectedProfile) {
+      navigate("/profiles", { replace: true });
+    }
+  }, [selectedProfile, navigate]);
+
   if (!selectedProfile) {
-    navigate("/profiles");
     return null;
   }
 
@@ -127,7 +132,7 @@ function Dashboard() {
 
 /**
  * StatCard
- * Small presentational component for the analytics bar at the top of the Dashboard.
+ * Small presentational component for the analytics bar at the top of the Dashboard
  */
 function StatCard({ label, value }) {
   return (

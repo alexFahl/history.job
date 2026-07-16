@@ -12,6 +12,8 @@ const { z } = require("zod");
  * - salaryExpected : optional, string
  * - currency    : optional, string (default: "€")
  * - jobAdUrl    : optional, string (URL to the original job posting)
+ * - status      : optional, one of "T" (To Apply), "A" (Applied), "I" (Interviewing), "R" (Rejected), or "O" (Offer)
+ * - appliedDate : optional, date
  */
 const createApplicationSchema = z.object({
   profileId: z.string().min(1, "Profile ID is required"),
@@ -22,6 +24,8 @@ const createApplicationSchema = z.object({
   salaryExpected: z.string().optional(),
   currency: z.string().optional(),
   jobAdUrl: z.string().optional(),
+  status: z.enum(["T", "A", "I", "R", "O"]).optional(),
+  appliedDate: z.coerce.date().optional(),
 });
 
 /**
@@ -87,10 +91,12 @@ const addFollowUpSchema = z.object({
  * Validates POST /api/applications/:id/replies
  * Rules:
  * - date  : required, must be a valid date
+ * - note  : optional, short free-text note (mirrors addFollowUpSchema)
  * - communicationChannel : optional, one of "M" (Mail), "P" (Phone), "L" (LinkedIn), "I" (In-person), or "S" (SMS)
  */
 const addReplySchema = z.object({
   date: z.coerce.date(),
+  note: z.string().optional(),
   communicationChannel: z.enum(["M", "P", "L", "I", "S"]).optional(),
 });
 

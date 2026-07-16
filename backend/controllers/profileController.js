@@ -1,5 +1,6 @@
 const Profile = require("../models/Profile");
 const Application = require("../models/Application");
+const { deleteApplicationDocuments } = require("./appController");
 
 // SECURITY
 // Verifies that a profile exists and belongs to the currently authenticated user
@@ -112,7 +113,10 @@ const deleteProfile = async (req, res) => {
       return res.status(404).json({ message: "Profile not found" });
     }
 
-    // Cascade-delete: remove all applications that belong to this profile
+    // Cascade-delete: remove any Cloudinary documents attached to this
+    // profile's applications, then the applications themselves
+    const applications = await Application.find({ profileId: profile._id });
+    await Promise.all(applications.map(deleteApplicationDocuments));
     await Application.deleteMany({ profileId: profile._id });
 
     await profile.deleteOne();
