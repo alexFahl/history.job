@@ -9,6 +9,7 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const appRoutes = require("./routes/appRoutes");
+const aiRoutes = require("./routes/aiRoutes");
 
 const app = express();
 
@@ -36,6 +37,9 @@ app.use("/api/profiles", profileRoutes);
 
 // APPLICATION ROUTES
 app.use("/api/applications", appRoutes);
+
+// GEMINI AI ROUTE
+app.use("/api/ai", aiRoutes);
 
 // UNKNOWN ROUTE
 app.use((req, res) => {

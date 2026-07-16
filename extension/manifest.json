@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "H.J Clipper",
+  "version": "1.0",
+  "description": "Captures job application data from web pages and saves it to your History.job account.",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
