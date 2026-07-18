@@ -25,6 +25,7 @@ function NewApplicationModal({ isOpen, onClose, profileId }) {
   const [currency, setCurrency] = useState("€");
   const [appliedDate, setAppliedDate] = useState(getToday);
   const [status, setStatus] = useState("T"); // Default to "To Apply"
+  const [description, setDescription] = useState("");
   const [error, setError] = useState("");
 
   const resetForm = () => {
@@ -37,6 +38,7 @@ function NewApplicationModal({ isOpen, onClose, profileId }) {
     setCurrency("€");
     setAppliedDate(getToday());
     setStatus("T");
+    setDescription("");
     setError("");
   };
 
@@ -59,6 +61,7 @@ function NewApplicationModal({ isOpen, onClose, profileId }) {
       salaryExpected: salaryExpected || undefined,
       currency: currency || undefined,
       appliedDate: appliedDate || undefined,
+      description: description || undefined,
       status,
     };
 
@@ -282,6 +285,26 @@ function NewApplicationModal({ isOpen, onClose, profileId }) {
               </option>
             </select>
           </div>
+        </div>
+
+        <div>
+          <label
+            htmlFor="description"
+            className="block text-sm font-medium text-secondary mb-1.5"
+          >
+            Description
+          </label>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Paste or type the job description here…"
+            rows={6}
+            className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-2.5
+                       text-text placeholder-white/20 text-sm resize-none
+                       focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
+                       transition-colors duration-200"
+          />
         </div>
 
         {error && (

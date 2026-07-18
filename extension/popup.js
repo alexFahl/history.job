@@ -25,10 +25,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const appliedDateInput = document.getElementById("applied-date");
   const jobTypeSelect = document.getElementById("job-type");
   const statusSelect = document.getElementById("status");
+  const descriptionInput = document.getElementById("description");
 
   const analyzeBtn = document.getElementById("analyze-btn");
   const actionMessage = document.getElementById("action-message");
-  const pageContentTextarea = document.getElementById("page-content"); // Hidden by default now
+
+  const addOfferBtn = document.getElementById("add-offer-btn");
+  const saveMessage = document.getElementById("save-message");
 
   // Check if user is already logged in
   chrome.storage.local.get(["token", "username"], (result) => {
@@ -155,10 +158,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const activeTab = tabs[0];
       if (!activeTab || !activeTab.id) return;
 
-      // Auto-fill defaults
       jobAdUrlInput.value = activeTab.url || "";
       appliedDateInput.value = getToday();
-      statusSelect.value = "T"; // "To Apply"
+      statusSelect.value = "A"; // Default
 
       chrome.tabs.sendMessage(
         activeTab.id,
@@ -169,7 +171,6 @@ document.addEventListener("DOMContentLoaded", () => {
           if (response) {
             companyInput.value = response.companyName || "";
             jobTitleInput.value = response.jobTitle || "";
-            // We use the URL returned by the script if available, else fallback to tab url
             if (response.jobAdUrl) jobAdUrlInput.value = response.jobAdUrl;
           }
         },
@@ -181,8 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
   analyzeBtn.addEventListener("click", () => {
     analyzeBtn.textContent = "Reading page...";
     actionMessage.textContent = "";
-    pageContentTextarea.style.display = "block";
-    pageContentTextarea.value = "Extracting text...";
+    saveMessage.textContent = "";
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const activeTab = tabs[0];
@@ -207,7 +207,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
           if (response && response.htmlContent) {
             analyzeBtn.textContent = "AI is thinking...";
-            pageContentTextarea.value = "Sending to Gemini AI...";
 
             chrome.storage.local.get(["token"], async (result) => {
               try {
@@ -232,6 +231,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     data.jobData.location || locationInput.value;
                   salaryExpectedInput.value =
                     data.jobData.salaryExpected || salaryExpectedInput.value;
+                  descriptionInput.value =
+                    data.jobData.description || descriptionInput.value;
 
                   if (data.jobData.currency) {
                     currencyInput.value = data.jobData.currency;
@@ -241,15 +242,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     jobTypeSelect.value = data.jobData.jobType;
                   }
 
-                  pageContentTextarea.value = JSON.stringify(
-                    data.jobData,
-                    null,
-                    2,
-                  );
-                  pageContentTextarea.style.display = "none"; // Hide debug textarea on success
-
                   actionMessage.textContent = "AI analysis complete!";
                   actionMessage.className = "success-msg";
+
+                  // Enable the "Add offer" button !
+                  addOfferBtn.disabled = false;
                 } else {
                   actionMessage.textContent =
                     data.message || "AI Analysis failed.";
@@ -270,6 +267,70 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         },
       );
+    });
+  });
+
+  // --- Add Offer Action (Save to DB) ---
+  addOfferBtn.addEventListener("click", () => {
+    // Validate required fields based on backend Schema
+    if (
+      !profileSelect.value ||
+      !companyInput.value.trim() ||
+      !jobTitleInput.value.trim()
+    ) {
+      saveMessage.textContent = "Company Name and Job Title are required.";
+      saveMessage.className = "error-msg";
+      return;
+    }
+
+    addOfferBtn.textContent = "Adding...";
+    addOfferBtn.disabled = true;
+    saveMessage.textContent = "";
+
+    const payload = {
+      profileId: profileSelect.value,
+      companyName: companyInput.value.trim(),
+      jobTitle: jobTitleInput.value.trim(),
+      location: locationInput.value.trim() || undefined,
+      jobAdUrl: jobAdUrlInput.value.trim() || undefined,
+      salaryExpected: salaryExpectedInput.value.trim() || undefined,
+      currency: currencyInput.value.trim() || undefined,
+      appliedDate: appliedDateInput.value || undefined,
+      jobType: jobTypeSelect.value || undefined,
+      status: statusSelect.value || "T",
+      description: descriptionInput.value.trim() || undefined,
+    };
+
+    chrome.storage.local.get(["token"], async (result) => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/applications`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${result.token}`,
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (response.ok) {
+          saveMessage.textContent = "Offer successfully saved!";
+          saveMessage.className = "success-msg";
+          addOfferBtn.textContent = "Offer Added ✓";
+          // We keep the button disabled so they don't spam create duplicates
+        } else {
+          const errorData = await response.json();
+          saveMessage.textContent =
+            errorData.message || "Failed to save offer.";
+          saveMessage.className = "error-msg";
+          addOfferBtn.textContent = "Add offer";
+          addOfferBtn.disabled = false;
+        }
+      } catch (error) {
+        saveMessage.textContent = "Server error. Could not save.";
+        saveMessage.className = "error-msg";
+        addOfferBtn.textContent = "Add offer";
+        addOfferBtn.disabled = false;
+      }
     });
   });
 });

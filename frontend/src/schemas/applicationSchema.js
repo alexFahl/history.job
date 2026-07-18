@@ -14,4 +14,5 @@ export const applicationSchema = z.object({
   salaryExpected: z.string().optional(),
   currency: z.string().optional(),
   appliedDate: z.string().optional(),
+  description: z.string().optional(),
 });

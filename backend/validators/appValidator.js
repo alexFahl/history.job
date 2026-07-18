@@ -12,6 +12,7 @@ const { z } = require("zod");
  * - salaryExpected : optional, string
  * - currency    : optional, string (default: "€")
  * - jobAdUrl    : optional, string (URL to the original job posting)
+ * - description : optional, string (free-text job description)
  * - status      : optional, one of "T" (To Apply), "A" (Applied), "I" (Interviewing), "R" (Rejected), or "O" (Offer)
  * - appliedDate : optional, date
  */
@@ -24,6 +25,7 @@ const createApplicationSchema = z.object({
   salaryExpected: z.string().optional(),
   currency: z.string().optional(),
   jobAdUrl: z.string().optional(),
+  description: z.string().optional(),
   status: z.enum(["T", "A", "I", "R", "O"]).optional(),
   appliedDate: z.coerce.date().optional(),
 });
@@ -39,6 +41,7 @@ const createApplicationSchema = z.object({
  * - salaryExpected : optional, string
  * - currency    : optional, string
  * - jobAdUrl    : optional, string (URL to the original job posting)
+ * - description : optional, string (free-text job description)
  * - status      : optional, one of "T" (To Apply), "A" (Applied), "I" (Interviewing), "R" (Rejected), or "O" (Offer)
  * - appliedDate : optional, date
  * - notes       : optional, string
@@ -51,6 +54,7 @@ const updateApplicationSchema = z.object({
   salaryExpected: z.string().optional(),
   currency: z.string().optional(),
   jobAdUrl: z.string().optional(),
+  description: z.string().optional(),
   status: z.enum(["T", "A", "I", "R", "O"]).optional(),
   appliedDate: z.coerce.date().optional(),
   notes: z.string().optional(),

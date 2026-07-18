@@ -3,15 +3,23 @@ import { useState, useEffect, useRef } from "react";
 /**
  * NotesSection
  *
- * Free-text notes field for the application where the user can type anything they want
+ * Free-text field for the application where the user can type anything they want
  * Uses a auto-save: we wait 800ms after the user stops typing before calling onSave.
  *
  * Props:
- *   value    : current notes string
- *   onSave   : function(newNotes) — called after the debounce delay
- *   isSaving : boolean — shows a small "Saving…" indicator
+ *   value       : current text string
+ *   onSave      : function(newText) — called after the debounce delay
+ *   isSaving    : boolean — shows a small "Saving…" indicator
+ *   title       : optional, section heading (default: "Notes")
+ *   placeholder : optional, textarea placeholder text
  */
-function NotesSection({ value, onSave, isSaving }) {
+function NotesSection({
+  value,
+  onSave,
+  isSaving,
+  title = "Notes",
+  placeholder = "Interview prep, company research, questions to ask…",
+}) {
   const [text, setText] = useState(value ?? "");
   const debounceRef = useRef(null);
 
@@ -34,14 +42,14 @@ function NotesSection({ value, onSave, isSaving }) {
   return (
     <section className="bg-white/[0.03] border border-white/10 rounded-2xl p-5">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-text font-semibold text-sm">Notes</h3>
+        <h3 className="text-text font-semibold text-sm">{title}</h3>
         {isSaving && <span className="text-white/30 text-xs">Saving…</span>}
       </div>
 
       <textarea
         value={text}
         onChange={handleChange}
-        placeholder="Interview prep, company research, questions to ask…"
+        placeholder={placeholder}
         rows={8}
         className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-3
                    text-text placeholder-white/20 text-sm resize-none

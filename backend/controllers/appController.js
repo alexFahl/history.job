@@ -10,7 +10,6 @@ const cloudinary = require("../config/cloudinary");
 // @param {string} applicationId - The id from the URL parameter
 // @param {string} userId        - The id from req.user
 // @returns {object|null} The application document, or null if not found / not owned.
-// ─────────────────────────────────────────────────────────────────────────────
 const findOwnedApplication = async (applicationId, userId) => {
   const application = await Application.findById(applicationId);
   if (!application) return null;
@@ -149,6 +148,7 @@ const updateApplication = async (req, res) => {
       "salaryExpected",
       "currency",
       "jobAdUrl",
+      "description",
       "status",
       "appliedDate",
       "notes",

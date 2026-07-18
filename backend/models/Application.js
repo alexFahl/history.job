@@ -74,6 +74,7 @@ const applicationSchema = new mongoose.Schema(
     salaryExpected: { type: String, trim: true },
     currency: { type: String, default: "€" },
     jobAdUrl: { type: String, trim: true },
+    description: { type: String },
 
     contacts: [contactSchema],
 

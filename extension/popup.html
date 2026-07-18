@@ -33,7 +33,6 @@
       textarea {
         resize: vertical;
         font-family: monospace;
-        font-size: 10px;
       }
       button {
         background: #3067fd;
@@ -46,6 +45,21 @@
       button:hover {
         background: #1e4bd8;
       }
+      /* Styles pour le bouton d'ajout (activé et désactivé) */
+      #add-offer-btn {
+        background: #4ade80;
+        color: #070d18;
+        margin-top: 5px;
+      }
+      #add-offer-btn:hover:not(:disabled) {
+        background: #22c55e;
+      }
+      button:disabled {
+        background: #334155 !important;
+        color: #94a3b8 !important;
+        cursor: not-allowed;
+      }
+
       label {
         font-size: 12px;
         color: #aaa;
@@ -70,7 +84,7 @@
         margin: 15px 0;
       }
 
-      /* Layout utilities resembling React Tailwind classes */
+      /* Layout utilities */
       .grid-2 {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -108,7 +122,6 @@
       <p style="font-size: 12px; color: #aaa; text-align: center; margin: 0">
         Logged in as <strong id="user-display" style="color: white"></strong>
       </p>
-
       <hr />
 
       <!-- Job Clipper Form -->
@@ -117,6 +130,12 @@
         <select id="profile-select">
           <option value="" disabled selected>Loading profiles...</option>
         </select>
+
+        <!-- Analyze bouton déplacé sous le profil -->
+        <button id="analyze-btn" style="margin-top: 5px; margin-bottom: 0">
+          Analyze offer
+        </button>
+        <div id="action-message" style="margin-bottom: 15px"></div>
 
         <label>Company</label>
         <input type="text" id="company-name" placeholder="e.g. Acme Corp" />
@@ -179,16 +198,16 @@
           </div>
         </div>
 
-        <button id="analyze-btn" style="margin-top: 10px">Analyze offer</button>
-        <div id="action-message"></div>
-
-        <!-- Debug Textarea (Optional, can be removed later) -->
+        <label>Description</label>
         <textarea
-          id="page-content"
-          rows="4"
-          placeholder="AI raw JSON will appear here..."
-          style="display: none"
+          id="description"
+          rows="6"
+          placeholder="Job description will appear here..."
         ></textarea>
+
+        <!-- Nouveau bouton d'ajout (désactivé par défaut) -->
+        <button id="add-offer-btn" disabled>Add offer</button>
+        <div id="save-message"></div>
       </div>
 
       <button

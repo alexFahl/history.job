@@ -44,6 +44,10 @@ function ApplicationDetail() {
     updateMutation.mutate({ notes: newNotes });
   };
 
+  const handleSaveDescription = (newDescription) => {
+    updateMutation.mutate({ description: newDescription });
+  };
+
   const handleDelete = async () => {
     await deleteMutation.mutateAsync();
     navigate("/dashboard");
@@ -95,6 +99,15 @@ function ApplicationDetail() {
 
             {/* Documents */}
             <DocumentsSection application={application} />
+
+            {/* Job description */}
+            <NotesSection
+              value={application.description}
+              onSave={handleSaveDescription}
+              isSaving={updateMutation.isPending}
+              title="Description"
+              placeholder="Paste or type the job description here…"
+            />
 
             {/* Notes */}
             <NotesSection
