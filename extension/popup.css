@@ -1,0 +1,245 @@
+/* --- Colors --- */
+:root {
+  --text: #ffffff;
+  --bg: #070d18;
+  --primary: #3067fd;
+  --secondary: #a3b9ff;
+  --accent: #e496a9;
+
+  --input-bg: rgba(255, 255, 255, 0.06);
+  --input-border: rgba(255, 255, 255, 0.1);
+  --success: #4ade80;
+  --error: #ff2c2c;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  width: 360px;
+  padding: 20px;
+  background-color: var(--bg);
+  color: var(--text);
+  margin: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.logo {
+  width: 28px;
+  height: 28px;
+}
+h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+label {
+  font-size: 12px;
+  color: var(--secondary);
+  margin-bottom: 6px;
+  display: block;
+  font-weight: 500;
+}
+.user-info {
+  font-size: 12px;
+  color: var(--secondary);
+  text-align: center;
+  margin: 0;
+}
+.user-info strong {
+  color: var(--text);
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text);
+  font-size: 13px;
+  transition: all 0.2s ease-in-out;
+}
+textarea {
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.4;
+}
+textarea::-webkit-scrollbar {
+  width: 6px;
+}
+textarea::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(48, 103, 253, 0.25);
+}
+
+option {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+button {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: var(--primary);
+  color: var(--text);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+button:hover:not(:disabled) {
+  background-color: #1e4bd8;
+  transform: translateY(-1px);
+}
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+.action-buttons button {
+  margin-bottom: 0;
+}
+
+#cancel-offer-btn {
+  background-color: var(--error);
+  border: 1px solid var(--input-border);
+  color: var(--text);
+}
+#cancel-offer-btn:hover {
+  background-color: rgba(168, 0, 0, 0.993);
+}
+
+#add-offer-btn {
+  background-color: var(--success);
+  color: var(--bg);
+  box-shadow: 0 4px 14px rgba(74, 222, 128, 0.2);
+}
+#add-offer-btn:hover:not(:disabled) {
+  background-color: #22c55e;
+}
+
+button:disabled {
+  background-color: var(--input-bg) !important;
+  color: rgba(255, 255, 255, 0.3) !important;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+#cancel-analysis-btn {
+  width: auto;
+  padding: 6px 16px;
+  font-size: 11px;
+  background-color: transparent;
+  color: var(--accent);
+  margin: 15px 0px 0px 0px;
+}
+#cancel-analysis-btn:hover {
+  transform: translateY(-1px);
+}
+
+#logout-btn {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  margin-top: 15px;
+}
+#logout-btn:hover {
+  background: rgba(228, 150, 169, 0.1);
+}
+
+.error-msg {
+  color: var(--accent);
+  font-size: 12px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: 500;
+}
+.success-msg {
+  color: var(--success);
+  font-size: 12px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-weight: 500;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--input-border);
+  margin: 20px 0;
+}
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.flex-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.flex-row input {
+  margin-bottom: 0;
+}
+.currency-input {
+  width: 55px !important;
+  text-align: center;
+}
+
+#loader {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--input-border);
+  border-top: 3px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 10px auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+#loader p {
+  color: var(--secondary);
+  font-size: 13px;
+  margin: 0;
+  font-weight: 500;
+}

@@ -3,111 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <title>History.job Clipper</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        width: 350px;
-        padding: 15px;
-        background: #070d18;
-        color: white;
-        margin: 0;
-      }
-      input,
-      select,
-      button,
-      textarea {
-        width: 100%;
-        margin-bottom: 10px;
-        padding: 8px;
-        box-sizing: border-box;
-        border-radius: 4px;
-      }
-      input,
-      select,
-      textarea {
-        border: 1px solid #3067fd;
-        background: #1a2235;
-        color: white;
-        font-size: 13px;
-      }
-      textarea {
-        resize: vertical;
-        font-family: monospace;
-      }
-      button {
-        background: #3067fd;
-        color: white;
-        border: none;
-        cursor: pointer;
-        font-weight: bold;
-        padding: 10px;
-      }
-      button:hover {
-        background: #1e4bd8;
-      }
-      /* Styles pour le bouton d'ajout (activé et désactivé) */
-      #add-offer-btn {
-        background: #4ade80;
-        color: #070d18;
-        margin-top: 5px;
-      }
-      #add-offer-btn:hover:not(:disabled) {
-        background: #22c55e;
-      }
-      button:disabled {
-        background: #334155 !important;
-        color: #94a3b8 !important;
-        cursor: not-allowed;
-      }
-
-      label {
-        font-size: 12px;
-        color: #aaa;
-        margin-bottom: 2px;
-        display: block;
-      }
-      .error-msg {
-        color: #e496a9;
-        font-size: 12px;
-        margin-top: 5px;
-        text-align: center;
-      }
-      .success-msg {
-        color: #4ade80;
-        font-size: 12px;
-        margin-top: 5px;
-        text-align: center;
-      }
-      hr {
-        border: 0;
-        border-top: 1px solid #1a2235;
-        margin: 15px 0;
-      }
-
-      /* Layout utilities */
-      .grid-2 {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-      }
-      .flex-row {
-        display: flex;
-        gap: 5px;
-        margin-bottom: 10px;
-      }
-      .flex-row input {
-        margin-bottom: 0;
-      }
-      .currency-input {
-        width: 50px !important;
-        text-align: center;
-      }
-    </style>
+    <link rel="stylesheet" href="popup.css" />
   </head>
   <body>
-    <h2 style="text-align: center; margin-top: 0; font-size: 18px">
-      History.job
-    </h2>
+    <!-- Header avec le Logo SVG -->
+    <div class="header">
+      <img src="icons/HJ_basic.svg" alt="History.job Logo" class="logo" />
+      <h2>History.job</h2>
+    </div>
 
     <!-- Login Section -->
     <div id="login-section">
@@ -119,9 +22,7 @@
 
     <!-- App Section (Logged In) -->
     <div id="app-section" style="display: none">
-      <p style="font-size: 12px; color: #aaa; text-align: center; margin: 0">
-        Logged in as <strong id="user-display" style="color: white"></strong>
-      </p>
+      <p class="user-info">Logged in as <strong id="user-display"></strong></p>
       <hr />
 
       <!-- Job Clipper Form -->
@@ -131,96 +32,104 @@
           <option value="" disabled selected>Loading profiles...</option>
         </select>
 
-        <!-- Analyze bouton déplacé sous le profil -->
-        <button id="analyze-btn" style="margin-top: 5px; margin-bottom: 0">
+        <button id="analyze-btn" style="margin-top: 5px; margin-bottom: 5px">
           Analyze offer
         </button>
-        <div id="action-message" style="margin-bottom: 15px"></div>
+        <div id="action-message"></div>
 
-        <label>Company</label>
-        <input type="text" id="company-name" placeholder="e.g. Acme Corp" />
+        <!-- Loader -->
+        <div id="loader" style="display: none">
+          <div class="spinner"></div>
+          <p>AI analyzing the page...</p>
+          <button
+            id="cancel-analysis-btn"
+            type="button"
+            class="btn-small-outline"
+          >
+            Cancel
+          </button>
+        </div>
 
-        <label>Job Title</label>
-        <input
-          type="text"
-          id="job-title"
-          placeholder="e.g. Frontend Developer"
-        />
+        <!-- Fields -->
+        <div id="form-fields" style="display: none">
+          <label>Company</label>
+          <input type="text" id="company-name" placeholder="ex: Renault" />
 
-        <label>Location</label>
-        <input type="text" id="location" placeholder="e.g. Paris, France" />
+          <label>Job Title</label>
+          <input
+            type="text"
+            id="job-title"
+            placeholder="ex: Frontend Developer"
+          />
 
-        <label>Job Ad URL</label>
-        <input type="url" id="job-ad-url" placeholder="https://..." />
+          <label>Location</label>
+          <input type="text" id="location" placeholder="ex: Paris, France" />
 
-        <div class="grid-2">
-          <div>
-            <label>Salary Expected</label>
-            <div class="flex-row">
-              <input
-                type="text"
-                id="salary-expected"
-                placeholder="e.g. 55000"
-              />
-              <input
-                type="text"
-                id="currency"
-                value="€"
-                class="currency-input"
-              />
+          <label>Job Ad URL</label>
+          <input type="url" id="job-ad-url" placeholder="https://..." />
+
+          <div class="grid-2">
+            <div>
+              <label>Salary Expected</label>
+              <div class="flex-row">
+                <input
+                  type="text"
+                  id="salary-expected"
+                  placeholder="ex: 55000"
+                />
+                <input
+                  type="text"
+                  id="currency"
+                  value="€"
+                  class="currency-input"
+                  placeholder="€"
+                />
+              </div>
+            </div>
+            <div>
+              <label>Applied on</label>
+              <input type="date" id="applied-date" />
             </div>
           </div>
-          <div>
-            <label>Applied on</label>
-            <input type="date" id="applied-date" />
+
+          <div class="grid-2">
+            <div>
+              <label>Job Type</label>
+              <select id="job-type">
+                <option value="">None</option>
+                <option value="C">City</option>
+                <option value="H">Hybrid</option>
+                <option value="R">Remote</option>
+              </select>
+            </div>
+            <div>
+              <label>Status</label>
+              <select id="status">
+                <option value="T">To Apply</option>
+                <option value="A">Applied</option>
+                <option value="I">Interviewing</option>
+                <option value="R">Rejected</option>
+                <option value="O">Offer</option>
+              </select>
+            </div>
           </div>
+
+          <label>Description</label>
+          <textarea
+            id="description"
+            rows="6"
+            placeholder="Job description will appear here..."
+          ></textarea>
+
+          <div class="action-buttons">
+            <button id="cancel-offer-btn" type="button">Cancel</button>
+            <button id="add-offer-btn" disabled>Add offer</button>
+          </div>
+          <div id="save-message"></div>
         </div>
-
-        <div class="grid-2">
-          <div>
-            <label>Job Type</label>
-            <select id="job-type">
-              <option value="">None</option>
-              <option value="C">City</option>
-              <option value="H">Hybrid</option>
-              <option value="R">Remote</option>
-            </select>
-          </div>
-          <div>
-            <label>Status</label>
-            <select id="status">
-              <option value="T">To Apply</option>
-              <option value="A">Applied</option>
-              <option value="I">Interviewing</option>
-              <option value="R">Rejected</option>
-              <option value="O">Offer</option>
-            </select>
-          </div>
-        </div>
-
-        <label>Description</label>
-        <textarea
-          id="description"
-          rows="6"
-          placeholder="Job description will appear here..."
-        ></textarea>
-
-        <!-- Nouveau bouton d'ajout (désactivé par défaut) -->
-        <button id="add-offer-btn" disabled>Add offer</button>
-        <div id="save-message"></div>
       </div>
 
-      <button
-        id="logout-btn"
-        style="
-          background: transparent;
-          border: 1px solid #e496a9;
-          color: #e496a9;
-          margin-top: 15px;
-        "
-      >
-        Log Out
-      </button>
+      <button id="logout-btn">Log Out</button>
     </div>
 
     <script src="popup.js"></script>
