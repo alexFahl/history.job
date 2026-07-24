@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Profile = require("../models/Profile");
 const Application = require("../models/Application");
 const { deleteApplicationDocuments } = require("./appController");
@@ -9,6 +10,9 @@ const { deleteApplicationDocuments } = require("./appController");
 // @param {string} userId    - The id from req.user
 // @returns {object|null}    - The profile document, or null if not found / not owned
 const findOwnedProfile = async (profileId, userId) => {
+  // Guard against malformed id so an invalid ObjectId
+  if (!mongoose.isValidObjectId(profileId)) return null;
+
   return await Profile.findOne({ _id: profileId, userId });
 };
 

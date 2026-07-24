@@ -5,6 +5,10 @@ const dotenv = require("dotenv");
 // Load .env variables
 dotenv.config();
 
+// Fail fast if any required environment variable is missing
+const validateEnv = require("./config/validateEnv");
+validateEnv();
+
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const profileRoutes = require("./routes/profileRoutes");
@@ -60,6 +64,6 @@ const PORT = process.env.PORT || 5000;
 
 connectDB().then(() => {
   app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}`);
   });
 });

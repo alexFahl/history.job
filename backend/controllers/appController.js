@@ -1,4 +1,5 @@
 const path = require("path");
+const mongoose = require("mongoose");
 const Application = require("../models/Application");
 const Profile = require("../models/Profile");
 const cloudinary = require("../config/cloudinary");
@@ -11,6 +12,9 @@ const cloudinary = require("../config/cloudinary");
 // @param {string} userId        - The id from req.user
 // @returns {object|null} The application document, or null if not found / not owned.
 const findOwnedApplication = async (applicationId, userId) => {
+  // Guard against malformed id so an invalid ObjectId
+  if (!mongoose.isValidObjectId(applicationId)) return null;
+
   const application = await Application.findById(applicationId);
   if (!application) return null;
 
@@ -55,6 +59,11 @@ const createApplication = async (req, res) => {
   try {
     const { profileId, ...rest } = req.body;
 
+    // Guard against malformed id so an invalid ObjectId returns 404
+    if (!mongoose.isValidObjectId(profileId)) {
+      return res.status(404).json({ message: "Profile not found" });
+    }
+
     const profile = await Profile.findOne({
       _id: profileId,
       userId: req.user._id,
@@ -83,6 +92,11 @@ const createApplication = async (req, res) => {
 const getApplicationsByProfile = async (req, res) => {
   try {
     const { profileId } = req.params;
+
+    // Guard against malformed id so an invalid ObjectId returns 404
+    if (!mongoose.isValidObjectId(profileId)) {
+      return res.status(404).json({ message: "Profile not found" });
+    }
 
     const profile = await Profile.findOne({
       _id: profileId,

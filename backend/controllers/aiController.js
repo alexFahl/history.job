@@ -8,13 +8,8 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 // @access  Private
 const analyzeJobOffer = async (req, res) => {
   try {
+    // Body already validated & sanitized by analyzeJobOfferSchema (see aiRoutes)
     const { textContent } = req.body;
-
-    if (!textContent) {
-      return res
-        .status(400)
-        .json({ message: "Text content is required for analysis." });
-    }
 
     const prompt = `
       Analyze the following job offer text and extract the key information.
