@@ -315,10 +315,10 @@ function ProfileSelector() {
                 </>
               )}
 
-              {/* Track viewport */}
-              <div className="overflow-hidden py-6">
+              {/* Track viewport — fixed height so the layout below stays put */}
+              <div className="h-[34rem] overflow-hidden">
                 <div
-                  className="flex items-center gap-8 transition-transform duration-500 ease-out"
+                  className="flex h-full items-center gap-8 transition-transform duration-500 ease-out"
                   style={{
                     transform: `translateX(calc(50% - 10rem - ${activeIndex * 22}rem))`,
                   }}
@@ -350,14 +350,14 @@ function ProfileSelector() {
                             type="button"
                             onClick={(e) => handleRequestDelete(e, profile)}
                             aria-label={`Delete profile ${profile.profileName}`}
-                            className="absolute top-5 right-5 z-10 p-1.5 rounded-lg text-secondary
+                            className="absolute top-5 right-5 z-10 p-2.5 rounded-lg text-secondary
                                        hover:text-accent hover:bg-white/[0.06] transition-colors duration-150"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 20 20"
                               fill="currentColor"
-                              className="w-4 h-4"
+                              className="w-6 h-6"
                             >
                               <path
                                 fillRule="evenodd"
@@ -369,10 +369,11 @@ function ProfileSelector() {
                         )}
 
                         {/* Country avatar */}
-                        <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/[0.06] border border-white/10">
-                          <span className="text-2xl font-bold tracking-tight text-text">
-                            {profile.country}
-                          </span>
+                        <div className="h-20 w-20 overflow-hidden rounded-2xl border border-white/10">
+                          <span
+                            className={`fi fis fi-${profile.country?.toLowerCase()} !block !h-full !w-full`}
+                            title={profile.country}
+                          />
                         </div>
 
                         {/* Name + country */}
@@ -391,6 +392,26 @@ function ProfileSelector() {
                             Archived
                           </span>
                         )}
+
+                        {/* Application counts */}
+                        <div className="mt-6 space-y-3">
+                          <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
+                            <span className="text-sm font-medium text-secondary">
+                              To apply
+                            </span>
+                            <span className="text-2xl font-bold text-text">
+                              {profile.toApplyCount ?? 0}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
+                            <span className="text-sm font-medium text-secondary">
+                              Applied
+                            </span>
+                            <span className="text-2xl font-bold text-text">
+                              {profile.appliedCount ?? 0}
+                            </span>
+                          </div>
+                        </div>
 
                         {/* Live clock pinned to the bottom */}
                         <div className="mt-auto pt-6 border-t border-white/10">

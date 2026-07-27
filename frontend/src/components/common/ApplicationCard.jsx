@@ -1,6 +1,14 @@
 import { useNavigate } from "react-router-dom";
-import { JOB_TYPE_LABELS } from "../../utils/constants";
 import { timeAgo } from "../../utils/formatDate";
+
+// Left accent colour per application status
+const STATUS_ACCENTS = {
+  T: "before:bg-secondary",
+  A: "before:bg-primary",
+  I: "before:bg-accent",
+  R: "before:bg-red-400",
+  O: "before:bg-emerald-400",
+};
 
 /**
  * ApplicationCard
@@ -17,22 +25,25 @@ function ApplicationCard({ application }) {
     <button
       type="button"
       onClick={() => navigate(`/applications/${application._id}`)}
-      className="w-full text-left bg-white/[0.04] hover:bg-white/[0.08] border border-white/10
-                 hover:border-primary/50 rounded-xl p-4 transition-all duration-200"
+      className={`group relative w-full overflow-hidden text-left bg-white/[0.04] hover:bg-white/[0.07]
+                 border border-white/10 hover:border-white/20 rounded-lg pl-4 pr-3 py-2.5
+                 transition-all duration-200 hover:-translate-y-0.5
+                 before:absolute before:inset-y-0 before:left-0 before:w-1 before:content-['']
+                 ${STATUS_ACCENTS[application.status] ?? "before:bg-white/20"}`}
     >
-      <h4 className="text-text font-medium text-sm">
-        {application.companyName}
-      </h4>
-      <p className="text-secondary text-xs mt-0.5">{application.jobTitle}</p>
-
-      <div className="flex items-center gap-2 mt-3 text-xs text-white/40">
-        {application.jobType && (
-          <span className="bg-white/5 px-2 py-0.5 rounded-full">
-            {JOB_TYPE_LABELS[application.jobType]}
-          </span>
-        )}
-        <span>{timeAgo(application.createdAt)}</span>
+      <div className="flex items-baseline gap-1.5 min-w-0">
+        <h4 className="text-text font-medium text-sm truncate shrink-0 max-w-[55%]">
+          {application.companyName}
+        </h4>
+        <span className="text-white/20 text-xs">·</span>
+        <p className="text-secondary text-xs truncate">
+          {application.jobTitle}
+        </p>
       </div>
+
+      <span className="mt-1 block text-[11px] text-white/40">
+        {timeAgo(application.createdAt)}
+      </span>
     </button>
   );
 }

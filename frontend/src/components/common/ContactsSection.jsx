@@ -45,7 +45,7 @@ function ContactsSection({ application }) {
   };
 
   return (
-    <section className="bg-white/[0.03] border border-white/10 rounded-2xl p-5">
+    <section className="bg-white/[0.03] border border-white/10 rounded-2xl p-5 flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-text font-semibold text-sm">Contacts</h3>
         <button
@@ -58,7 +58,7 @@ function ContactsSection({ application }) {
       </div>
 
       {/* Existing contacts */}
-      <div className="space-y-2 mb-2">
+      <div className="space-y-2 mb-2 flex-1 min-h-[8rem] overflow-y-auto pr-1">
         {application.contacts.length === 0 && !isFormOpen && (
           <p className="text-white/20 text-xs">No contacts added yet.</p>
         )}

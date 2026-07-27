@@ -77,7 +77,7 @@ function TimelineSection({ application }) {
   };
 
   return (
-    <section className="bg-white/[0.03] border border-white/10 rounded-2xl p-5">
+    <section className="bg-white/[0.03] border border-white/10 rounded-2xl p-5 flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-text font-semibold text-sm">Timeline</h3>
         <div className="flex gap-3">
@@ -103,7 +103,7 @@ function TimelineSection({ application }) {
       </div>
 
       {/* Vertical timeline */}
-      <div className="space-y-4 mb-2">
+      <div className="space-y-4 mb-2 flex-1 min-h-[12rem] overflow-y-auto pr-1">
         {events.length === 0 && (
           <p className="text-white/20 text-xs">No timeline events yet.</p>
         )}

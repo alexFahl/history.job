@@ -19,6 +19,8 @@ function NotesSection({
   isSaving,
   title = "Notes",
   placeholder = "Interview prep, company research, questions to ask…",
+  rows = 8,
+  grow = false,
 }) {
   const [text, setText] = useState(value ?? "");
   const debounceRef = useRef(null);
@@ -40,7 +42,11 @@ function NotesSection({
   };
 
   return (
-    <section className="bg-white/[0.03] border border-white/10 rounded-2xl p-5">
+    <section
+      className={`bg-white/[0.03] border border-white/10 rounded-2xl p-5 ${
+        grow ? "flex flex-1 flex-col" : ""
+      }`}
+    >
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-text font-semibold text-sm">{title}</h3>
         {isSaving && <span className="text-white/30 text-xs">Saving…</span>}
@@ -50,11 +56,11 @@ function NotesSection({
         value={text}
         onChange={handleChange}
         placeholder={placeholder}
-        rows={8}
-        className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-3
+        rows={rows}
+        className={`w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-3
                    text-text placeholder-white/20 text-sm resize-none
                    focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
-                   transition-colors duration-200"
+                   transition-colors duration-200 ${grow ? "flex-1 min-h-0" : ""}`}
       />
     </section>
   );

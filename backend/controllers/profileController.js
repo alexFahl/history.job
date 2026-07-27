@@ -46,11 +46,43 @@ const createProfile = async (req, res) => {
 const getProfiles = async (req, res) => {
   try {
     // a user can only see their own profiles
-    const profiles = await Profile.find({ userId: req.user._id }).sort({
-      createdAt: 1,
+    const profiles = await Profile.find({ userId: req.user._id })
+      .sort({ createdAt: 1 })
+      .lean();
+
+    const profileIds = profiles.map((p) => p._id);
+
+    // Count applications per profile & status in a single aggregation
+    // (T = To Apply, A = Applied) to avoid one request per card on the client
+    const counts = await Application.aggregate([
+      { $match: { profileId: { $in: profileIds } } },
+      {
+        $group: {
+          _id: { profileId: "$profileId", status: "$status" },
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Build a lookup: profileId -> { T: n, A: n, ... }
+    const countsByProfile = {};
+    counts.forEach(({ _id, count }) => {
+      const key = _id.profileId.toString();
+      if (!countsByProfile[key]) countsByProfile[key] = {};
+      countsByProfile[key][_id.status] = count;
     });
 
-    res.status(200).json({ profiles });
+    // Attach the "To Apply" and "Applied" counts to each profile
+    const profilesWithCounts = profiles.map((profile) => {
+      const profileCounts = countsByProfile[profile._id.toString()] || {};
+      return {
+        ...profile,
+        toApplyCount: profileCounts.T || 0,
+        appliedCount: profileCounts.A || 0,
+      };
+    });
+
+    res.status(200).json({ profiles: profilesWithCounts });
   } catch (error) {
     console.error("[ProfileController] getProfiles error:", error.message);
     res.status(500).json({ message: "Server error while fetching profiles" });
