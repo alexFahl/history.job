@@ -13,6 +13,7 @@ import ContactsSection from "../components/common/ContactsSection";
 import TimelineSection from "../components/common/TimelineSection";
 import DocumentsSection from "../components/common/DocumentsSection";
 import NotesSection from "../components/common/NotesSection";
+import Loader from "../components/common/Loader";
 
 /**
  * ApplicationDetail
@@ -54,19 +55,40 @@ function ApplicationDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-background text-text flex">
       <Navbar />
 
-      <main className="flex-1 min-w-0">
-        <div className="px-6 py-8">
+      <main className="relative flex-1 min-w-0 overflow-hidden">
+        {/* Ambient background — soft glows + dotted grid for depth */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -top-32 -left-24 h-96 w-96 rounded-full bg-primary/20 blur-[130px]" />
+          <div className="absolute top-32 right-0 h-80 w-80 rounded-full bg-accent/10 blur-[130px]" />
+          <div className="absolute inset-0 bg-grid-dots opacity-[0.12]" />
+        </div>
+
+        <div className="relative w-full px-6 py-8">
           {/* Header: back link + delete */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-8">
             <button
               type="button"
               onClick={() => navigate("/dashboard")}
-              className="text-secondary hover:text-primary text-sm transition-colors duration-150"
+              className="group inline-flex items-center gap-2 rounded-full border border-white/10
+                         bg-white/[0.03] px-4 py-2 text-sm text-secondary backdrop-blur-sm
+                         transition-all duration-200 hover:border-white/20 hover:bg-white/[0.06] hover:text-text"
             >
-              ← Back to dashboard
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M12.79 5.23a.75.75 0 0 1 0 1.06L9.06 10l3.73 3.71a.75.75 0 1 1-1.06 1.06l-4.25-4.24a.75.75 0 0 1 0-1.06l4.25-4.24a.75.75 0 0 1 1.06 0Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Back to dashboard
             </button>
 
             {application &&
@@ -74,7 +96,7 @@ function ApplicationDetail() {
                 <button
                   type="button"
                   onClick={() => setIsDeleting(true)}
-                  className="flex items-center gap-2 rounded-lg border border-red-500/40 hover:border-red-500/60
+                  className="flex items-center gap-2 rounded-full border border-red-500/40 hover:border-red-500/60
                              bg-red-500/10 hover:bg-red-500/20 px-4 py-2 text-sm font-medium
                              text-red-400 hover:text-red-300 transition-colors duration-150"
                 >
@@ -99,7 +121,7 @@ function ApplicationDetail() {
                     onClick={handleDelete}
                     disabled={deleteMutation.isPending}
                     className="bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white text-sm
-                               font-medium px-4 py-2 rounded-lg transition-colors duration-150"
+                               font-medium px-4 py-2 rounded-full transition-colors duration-150"
                   >
                     {deleteMutation.isPending ? "Deleting…" : "Confirm delete"}
                   </button>
@@ -114,18 +136,16 @@ function ApplicationDetail() {
               ))}
           </div>
 
-          {isLoading && (
-            <p className="text-secondary text-center mt-16">Loading…</p>
-          )}
+          {isLoading && <Loader label="Loading application…" />}
           {isError && (
-            <p className="text-accent text-center mt-16">
+            <p className="text-accent text-center mt-24">
               Failed to load this application.
             </p>
           )}
 
           {application && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
-              {/* Row 1 — Key info / Documents */}
+            <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-5 items-stretch">
+              {/* Row 1 — Key info (featured) / Contacts */}
               <EditableInfoSection
                 application={application}
                 onSave={handleSaveInfo}

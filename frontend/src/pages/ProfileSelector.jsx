@@ -394,22 +394,61 @@ function ProfileSelector() {
                         )}
 
                         {/* Application counts */}
-                        <div className="mt-6 space-y-3">
-                          <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
-                            <span className="text-sm font-medium text-secondary">
-                              To apply
-                            </span>
-                            <span className="text-2xl font-bold text-text">
+                        <div className="mt-6 grid grid-cols-2 gap-3">
+                          {/* To apply */}
+                          <div className="rounded-xl border border-secondary/25 bg-secondary/[0.08] p-3">
+                            <div className="flex items-center gap-2">
+                              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-secondary/20 text-secondary">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth={1.7}
+                                  className="h-4 w-4"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+                                  />
+                                </svg>
+                              </span>
+                              <span className="text-xs font-medium text-secondary">
+                                To apply
+                              </span>
+                            </div>
+                            <p className="mt-2 text-3xl font-bold text-text tabular-nums">
                               {profile.toApplyCount ?? 0}
-                            </span>
+                            </p>
                           </div>
-                          <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
-                            <span className="text-sm font-medium text-secondary">
-                              Applied
-                            </span>
-                            <span className="text-2xl font-bold text-text">
+
+                          {/* Applied */}
+                          <div className="rounded-xl border border-primary/25 bg-primary/[0.10] p-3">
+                            <div className="flex items-center gap-2">
+                              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/20 text-primary">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth={1.7}
+                                  className="h-4 w-4"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
+                                  />
+                                </svg>
+                              </span>
+                              <span className="text-xs font-medium text-primary">
+                                Applied
+                              </span>
+                            </div>
+                            <p className="mt-2 text-3xl font-bold text-text tabular-nums">
                               {profile.appliedCount ?? 0}
-                            </span>
+                            </p>
                           </div>
                         </div>
 

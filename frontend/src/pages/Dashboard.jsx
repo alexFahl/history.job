@@ -6,6 +6,7 @@ import { STATUS_ORDER, STATUS_LABELS } from "../utils/constants";
 import Navbar from "../components/layout/Navbar";
 import ApplicationCard from "../components/common/ApplicationCard";
 import NewApplicationModal from "../components/layout/NewApplicationModal";
+import Loader from "../components/common/Loader";
 
 // Solid accent colour per Kanban status (top bar + header dot)
 const STATUS_ACCENTS = {
@@ -38,6 +39,24 @@ const STATUS_ICONS = {
   // Offer — trophy
   O: "M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 0 0 2.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 0 1 2.916.52 6.003 6.003 0 0 1-5.395 4.972m0 0a6.726 6.726 0 0 1-2.749 1.35m0 0a6.772 6.772 0 0 1-3.044 0",
 };
+
+// Briefcase icon for the "Total" stat card (heroicons outline)
+const TOTAL_ICON =
+  "M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 6.008c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z";
+
+// Colour tones used by the stat cards
+const STAT_TONES = {
+  primary: { chip: "bg-primary/15 text-primary", glow: "bg-primary/30" },
+  secondary: {
+    chip: "bg-secondary/15 text-secondary",
+    glow: "bg-secondary/30",
+  },
+  accent: { chip: "bg-accent/15 text-accent", glow: "bg-accent/30" },
+  red: { chip: "bg-red-400/15 text-red-400", glow: "bg-red-400/30" },
+};
+
+// Per-column pagination — how many cards to show at once
+const PAGE_SIZE_OPTIONS = [5, 10, 25, "All"];
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -90,14 +109,36 @@ function Dashboard() {
         <div className="max-w-[100rem] mx-auto px-6 py-8">
           {/* Stats bar */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-            <StatCard label="Total" value={stats.total} />
-            <StatCard label="Applied" value={stats.applied} />
-            <StatCard label="Interviewing" value={stats.interviewing} />
-            <StatCard label="Rejected" value={stats.rejected} />
+            <StatCard
+              label="Total"
+              value={stats.total}
+              tone="primary"
+              icon={TOTAL_ICON}
+              featured
+            />
+            <StatCard
+              label="Applied"
+              value={stats.applied}
+              tone="secondary"
+              icon={STATUS_ICONS.A}
+            />
+            <StatCard
+              label="Interviewing"
+              value={stats.interviewing}
+              tone="accent"
+              icon={STATUS_ICONS.I}
+            />
+            <StatCard
+              label="Rejected"
+              value={stats.rejected}
+              tone="red"
+              icon={STATUS_ICONS.R}
+            />
           </div>
 
-          {/* Toolbar: add application */}
-          <div className="flex justify-end mb-6">
+          {/* Toolbar: divider + add application (same row) */}
+          <div className="flex items-center gap-4 mb-6">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-white/20" />
             <button
               type="button"
               onClick={() => setIsModalOpen(true)}
@@ -110,11 +151,7 @@ function Dashboard() {
           </div>
 
           {/* Loading / error states */}
-          {isLoading && (
-            <p className="text-secondary text-center mt-16">
-              Loading applications…
-            </p>
-          )}
+          {isLoading && <Loader label="Loading applications…" />}
           {isError && (
             <p className="text-accent text-center mt-16">
               Failed to load applications. Please refresh the page.
@@ -131,58 +168,11 @@ function Dashboard() {
               ) : (
                 <div className="flex flex-wrap gap-4 items-stretch">
                   {visibleStatuses.map((statusCode) => (
-                    <div
+                    <KanbanColumn
                       key={statusCode}
-                      className="flex-1 min-w-[240px] flex flex-col overflow-hidden rounded-2xl
-                               border border-white/[0.06] bg-white/[0.02]"
-                    >
-                      {/* Coloured accent bar */}
-                      <div
-                        className={`h-1 w-full ${STATUS_ACCENTS[statusCode]}`}
-                      />
-
-                      {/* Column header */}
-                      <div className="flex items-center justify-between px-4 pt-3.5 pb-3">
-                        <div className="flex items-center gap-2">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={1.7}
-                            className={`h-4 w-4 ${STATUS_TEXT_COLORS[statusCode]}`}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d={STATUS_ICONS[statusCode]}
-                            />
-                          </svg>
-                          <span className="text-sm font-semibold text-text">
-                            {STATUS_LABELS[statusCode]}
-                          </span>
-                        </div>
-                        <span className="min-w-[1.5rem] rounded-full bg-white/[0.06] px-2 py-0.5 text-center text-xs font-medium text-secondary">
-                          {groupedByStatus[statusCode].length}
-                        </span>
-                      </div>
-
-                      {/* Cards */}
-                      <div className="flex-1 space-y-2 px-3 pb-3">
-                        {groupedByStatus[statusCode].map((application) => (
-                          <ApplicationCard
-                            key={application._id}
-                            application={application}
-                          />
-                        ))}
-
-                        {groupedByStatus[statusCode].length === 0 && (
-                          <div className="flex items-center justify-center rounded-xl border border-dashed border-white/10 py-8 text-xs text-white/25">
-                            No applications
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                      statusCode={statusCode}
+                      applications={groupedByStatus[statusCode]}
+                    />
                   ))}
                 </div>
               )}
@@ -201,14 +191,215 @@ function Dashboard() {
 }
 
 /**
+ * KanbanColumn
+ * One status column with its own independent pagination:
+ *   - a page-size selector (5 / 10 / 25 / All)
+ *   - previous / next controls
+ */
+function KanbanColumn({ statusCode, applications }) {
+  const [pageSize, setPageSize] = useState(10);
+  const [page, setPage] = useState(1);
+
+  const total = applications.length;
+  const isAll = pageSize === "All";
+  const effectiveSize = isAll ? Math.max(total, 1) : pageSize;
+  const totalPages = Math.max(1, Math.ceil(total / effectiveSize));
+
+  // Clamp the page if the underlying data shrank (e.g. a card moved out)
+  const currentPage = Math.min(page, totalPages);
+  const start = (currentPage - 1) * effectiveSize;
+  const visible = isAll
+    ? applications
+    : applications.slice(start, start + effectiveSize);
+
+  const handlePageSizeChange = (e) => {
+    const raw = e.target.value;
+    setPageSize(raw === "All" ? "All" : Number(raw));
+    setPage(1);
+  };
+
+  const showPager = !isAll && totalPages > 1;
+
+  return (
+    <div
+      className="flex-1 min-w-[240px] flex flex-col overflow-hidden rounded-2xl
+               border border-white/[0.06] bg-white/[0.02]"
+    >
+      {/* Coloured accent bar */}
+      <div className={`h-1 w-full ${STATUS_ACCENTS[statusCode]}`} />
+
+      {/* Column header */}
+      <div className="flex items-center justify-between px-4 pt-3.5 pb-3">
+        <div className="flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.7}
+            className={`h-4 w-4 ${STATUS_TEXT_COLORS[statusCode]}`}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d={STATUS_ICONS[statusCode]}
+            />
+          </svg>
+          <span className="text-sm font-semibold text-text">
+            {STATUS_LABELS[statusCode]}
+          </span>
+        </div>
+        <span className="min-w-[1.5rem] rounded-full bg-white/[0.06] px-2 py-0.5 text-center text-xs font-medium text-secondary">
+          {total}
+        </span>
+      </div>
+
+      {/* Cards */}
+      <div className="flex-1 space-y-2 px-3 pb-3">
+        {visible.map((application) => (
+          <ApplicationCard key={application._id} application={application} />
+        ))}
+
+        {total === 0 && (
+          <div className="flex items-center justify-center rounded-xl border border-dashed border-white/10 py-8 text-xs text-white/25">
+            No applications
+          </div>
+        )}
+      </div>
+
+      {/* Pagination footer */}
+      {total > 0 && (
+        <div className="flex items-center justify-between gap-2 border-t border-white/[0.06] px-3 py-2.5">
+          <label className="flex items-center gap-1.5 text-xs text-secondary">
+            <span>Show</span>
+            <select
+              value={pageSize}
+              onChange={handlePageSizeChange}
+              className="rounded-md border border-white/10 bg-white/[0.06] px-2 py-1 text-xs text-text
+                         appearance-none cursor-pointer focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+            >
+              {PAGE_SIZE_OPTIONS.map((opt) => (
+                <option key={opt} value={opt} className="bg-[#0d1528]">
+                  {opt}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          {showPager && (
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setPage(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+                aria-label="Previous page"
+                className="flex h-7 w-7 items-center justify-center rounded-md border border-white/10
+                           text-secondary hover:border-white/20 hover:text-text transition-colors duration-150
+                           disabled:opacity-30 disabled:hover:border-white/10"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="h-4 w-4"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M12.79 5.23a.75.75 0 0 1 0 1.06L9.06 10l3.73 3.71a.75.75 0 1 1-1.06 1.06l-4.25-4.24a.75.75 0 0 1 0-1.06l4.25-4.24a.75.75 0 0 1 1.06 0Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+              <span className="text-xs font-medium text-secondary tabular-nums">
+                {currentPage} / {totalPages}
+              </span>
+              <button
+                type="button"
+                onClick={() => setPage(Math.min(totalPages, currentPage + 1))}
+                disabled={currentPage === totalPages}
+                aria-label="Next page"
+                className="flex h-7 w-7 items-center justify-center rounded-md border border-white/10
+                           text-secondary hover:border-white/20 hover:text-text transition-colors duration-150
+                           disabled:opacity-30 disabled:hover:border-white/10"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="h-4 w-4"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M7.21 14.77a.75.75 0 0 1 0-1.06L10.94 10 7.21 6.29a.75.75 0 1 1 1.06-1.06l4.25 4.24a.75.75 0 0 1 0 1.06l-4.25 4.24a.75.75 0 0 1-1.06 0Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
  * StatCard
  * Small presentational component for the analytics bar at the top of the Dashboard
  */
-function StatCard({ label, value }) {
+function StatCard({ label, value, tone = "primary", icon, featured = false }) {
+  const { chip, glow } = STAT_TONES[tone] ?? STAT_TONES.primary;
+
   return (
-    <div className="bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3">
-      <p className="text-secondary text-xs">{label}</p>
-      <p className="text-text text-2xl font-bold mt-1">{value}</p>
+    <div
+      className={`group relative overflow-hidden rounded-2xl p-4 transition-all duration-300 ${
+        featured
+          ? "border border-primary/30 bg-gradient-to-br from-primary/[0.16] via-white/[0.03] to-transparent shadow-[0_0_0_1px_rgba(48,103,253,0.06)] hover:border-primary/50"
+          : "border border-white/[0.08] bg-white/[0.02] hover:border-white/[0.14] hover:bg-white/[0.03]"
+      }`}
+    >
+      {/* Ambient glow that intensifies on hover */}
+      <div
+        className={`pointer-events-none absolute -bottom-8 -right-8 rounded-full ${glow}
+                    blur-2xl transition-opacity duration-300 group-hover:opacity-90 ${
+                      featured ? "h-28 w-28 opacity-80" : "h-24 w-24 opacity-50"
+                    }`}
+      />
+
+      <div className="relative flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p
+            className={`truncate text-sm font-medium uppercase tracking-wide ${
+              featured ? "text-primary" : "text-secondary"
+            }`}
+          >
+            {label}
+          </p>
+          <p
+            className={`mt-1 font-bold tracking-tight text-text ${
+              featured ? "text-4xl" : "text-3xl"
+            }`}
+          >
+            {value}
+          </p>
+        </div>
+        <span
+          className={`flex shrink-0 items-center justify-center rounded-xl ${chip} ${
+            featured ? "h-12 w-12" : "h-11 w-11"
+          }`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.7}
+            className={featured ? "h-6 w-6" : "h-5 w-5"}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d={icon} />
+          </svg>
+        </span>
+      </div>
     </div>
   );
 }

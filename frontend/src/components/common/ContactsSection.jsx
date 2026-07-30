@@ -3,6 +3,7 @@ import {
   useAddContact,
   useDeleteContact,
 } from "../../hooks/useApplicationDetail";
+import Modal from "./Modal";
 
 /**
  * ContactsSection
@@ -45,59 +46,89 @@ function ContactsSection({ application }) {
   };
 
   return (
-    <section className="bg-white/[0.03] border border-white/10 rounded-2xl p-5 flex flex-col">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-text font-semibold text-sm">Contacts</h3>
-        <button
-          type="button"
-          onClick={() => setIsFormOpen((open) => !open)}
-          className="text-xs text-primary hover:text-primary/80 font-medium transition-colors"
-        >
-          {isFormOpen ? "Cancel" : "+ Add contact"}
-        </button>
-      </div>
-
-      {/* Existing contacts */}
-      <div className="space-y-2 mb-2 flex-1 min-h-[8rem] overflow-y-auto pr-1">
-        {application.contacts.length === 0 && !isFormOpen && (
-          <p className="text-white/20 text-xs">No contacts added yet.</p>
-        )}
-
-        {application.contacts.map((contact, index) => (
-          <div
-            key={contact._id ?? index}
-            className="flex items-start justify-between gap-2 bg-white/[0.04] rounded-lg px-3 py-2 text-sm"
+    <>
+      <section className="group flex flex-col rounded-2xl border border-white/[0.08] bg-white/[0.02] p-5 transition-all duration-300 hover:border-white/[0.14] hover:bg-white/[0.03]">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="flex items-center gap-2 text-sm font-semibold text-text">
+            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-white/[0.06] text-secondary">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                className="h-3.5 w-3.5"
+              >
+                <path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z" />
+              </svg>
+            </span>
+            Contacts
+          </h3>
+          <button
+            type="button"
+            onClick={() => setIsFormOpen(true)}
+            className="text-xs text-primary hover:text-primary/80 font-medium transition-colors"
           >
-            <div>
-              <p className="text-text font-medium">{contact.name}</p>
-              <p className="text-secondary text-xs">
-                {[contact.job, contact.email, contact.phone]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => deleteContactMutation.mutate(contact._id)}
-              disabled={deleteContactMutation.isPending}
-              aria-label={`Delete contact ${contact.name}`}
-              className="text-white/20 hover:text-accent text-sm leading-none transition-colors duration-150 disabled:opacity-30"
-            >
-              &times;
-            </button>
-          </div>
-        ))}
-      </div>
+            + Add contact
+          </button>
+        </div>
 
-      {/* Add contact inline form */}
-      {isFormOpen && (
-        <form onSubmit={handleSubmit} className="space-y-2 mt-3">
+        {/* Existing contacts */}
+        <div className="space-y-2 mb-2 h-56 overflow-y-auto pr-1">
+          {application.contacts.length === 0 && (
+            <p className="text-white/20 text-xs">No contacts added yet.</p>
+          )}
+
+          {application.contacts.map((contact, index) => (
+            <div
+              key={contact._id ?? index}
+              className="flex items-start justify-between gap-3 rounded-xl border border-white/[0.06] bg-white/[0.04] px-3 py-2.5 text-sm transition-colors duration-150 hover:border-white/[0.12]"
+            >
+              <div className="flex items-start gap-3 min-w-0">
+                <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-xs font-semibold text-primary">
+                  {contact.name?.charAt(0)?.toUpperCase() || "?"}
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-text font-medium">
+                    {contact.name}
+                  </p>
+                  <p className="truncate text-secondary text-xs">
+                    {[contact.job, contact.email, contact.phone]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => deleteContactMutation.mutate(contact._id)}
+                disabled={deleteContactMutation.isPending}
+                aria-label={`Delete contact ${contact.name}`}
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg
+                           text-white/25 hover:bg-accent/10 hover:text-accent transition-colors duration-150 disabled:opacity-30"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="h-4 w-4"
+                >
+                  <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
+                </svg>
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Add contact modal */}
+      <Modal isOpen={isFormOpen} onClose={resetForm} title="Add a contact">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <input
             type="text"
             placeholder="Name *"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
+            autoFocus
             className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-3 py-2
                        text-text placeholder-white/20 text-sm
                        focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
@@ -140,8 +171,8 @@ function ContactsSection({ application }) {
             {addContactMutation.isPending ? "Adding…" : "Save contact"}
           </button>
         </form>
-      )}
-    </section>
+      </Modal>
+    </>
   );
 }
 
