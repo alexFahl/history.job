@@ -14,6 +14,8 @@ import TimelineSection from "../components/common/TimelineSection";
 import DocumentsSection from "../components/common/DocumentsSection";
 import NotesSection from "../components/common/NotesSection";
 import Loader from "../components/common/Loader";
+import Button from "../components/common/Button";
+import { ChevronLeftIcon, TrashIcon } from "../components/common/icons";
 
 /**
  * ApplicationDetail
@@ -69,62 +71,36 @@ function ApplicationDetail() {
         <div className="relative w-full px-6 py-8">
           {/* Header: back link + delete */}
           <div className="flex items-center justify-between mb-8">
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              rounded="rounded-full"
               onClick={() => navigate("/dashboard")}
-              className="group inline-flex items-center gap-2 rounded-full border border-white/10
-                         bg-white/[0.03] px-4 py-2 text-sm text-secondary backdrop-blur-sm
-                         transition-all duration-200 hover:border-white/20 hover:bg-white/[0.06] hover:text-text"
+              className="group backdrop-blur-sm"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M12.79 5.23a.75.75 0 0 1 0 1.06L9.06 10l3.73 3.71a.75.75 0 1 1-1.06 1.06l-4.25-4.24a.75.75 0 0 1 0-1.06l4.25-4.24a.75.75 0 0 1 1.06 0Z"
-                  clipRule="evenodd"
-                />
-              </svg>
+              <ChevronLeftIcon className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
               Back to dashboard
-            </button>
+            </Button>
 
             {application &&
               (!isDeleting ? (
-                <button
-                  type="button"
+                <Button
+                  variant="danger-soft"
+                  rounded="rounded-full"
                   onClick={() => setIsDeleting(true)}
-                  className="flex items-center gap-2 rounded-full border border-red-500/40 hover:border-red-500/60
-                             bg-red-500/10 hover:bg-red-500/20 px-4 py-2 text-sm font-medium
-                             text-red-400 hover:text-red-300 transition-colors duration-150"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    className="h-4 w-4"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M8.75 1a.75.75 0 0 0-.75.75V2h-3.5a.75.75 0 0 0 0 1.5h.564l.62 10.548A2.75 2.75 0 0 0 8.427 17h3.146a2.75 2.75 0 0 0 2.743-2.952l.62-10.548h.564a.75.75 0 0 0 0-1.5h-3.5v-.25a.75.75 0 0 0-.75-.75h-2.5ZM8.5 6.75a.75.75 0 0 1 1.5 0v6.5a.75.75 0 0 1-1.5 0v-6.5Zm3.75-.75a.75.75 0 0 0-.75.75v6.5a.75.75 0 0 0 1.5 0v-6.5a.75.75 0 0 0-.75-.75Z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                  <TrashIcon className="h-4 w-4" />
                   Delete
-                </button>
+                </Button>
               ) : (
                 <div className="flex items-center gap-2">
-                  <button
-                    type="button"
+                  <Button
+                    variant="danger"
+                    rounded="rounded-full"
                     onClick={handleDelete}
                     disabled={deleteMutation.isPending}
-                    className="bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white text-sm
-                               font-medium px-4 py-2 rounded-full transition-colors duration-150"
                   >
                     {deleteMutation.isPending ? "Deleting…" : "Confirm delete"}
-                  </button>
+                  </Button>
                   <button
                     type="button"
                     onClick={() => setIsDeleting(false)}
@@ -166,7 +142,7 @@ function ApplicationDetail() {
                 isSaving={updateMutation.isPending}
                 title="Description"
                 placeholder="Paste or type the job description here…"
-                rows={10}
+                rows={11}
               />
               <TimelineSection application={application} />
 

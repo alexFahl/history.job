@@ -1,5 +1,7 @@
 import { useState } from "react";
 import Modal from "../common/Modal";
+import Button from "../common/Button";
+import { Field, TextInput, TextArea, Select } from "../common/Field";
 import { applicationSchema } from "../../schemas/applicationSchema";
 import { useCreateApplication } from "../../hooks/useApplications";
 
@@ -86,226 +88,116 @@ function NewApplicationModal({ isOpen, onClose, profileId }) {
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="Add a new application">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label
-            htmlFor="companyName"
-            className="block text-sm font-medium text-secondary mb-1.5"
-          >
-            Company name
-          </label>
-          <input
+        <Field label="Company name" htmlFor="companyName">
+          <TextInput
             id="companyName"
             type="text"
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
             placeholder="e.g. Acme Corp"
-            className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-2.5
-                       text-text placeholder-white/20 text-sm
-                       focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
-                       transition-colors duration-200"
           />
-        </div>
+        </Field>
 
-        <div>
-          <label
-            htmlFor="jobTitle"
-            className="block text-sm font-medium text-secondary mb-1.5"
-          >
-            Job title
-          </label>
-          <input
+        <Field label="Job title" htmlFor="jobTitle">
+          <TextInput
             id="jobTitle"
             type="text"
             value={jobTitle}
             onChange={(e) => setJobTitle(e.target.value)}
             placeholder="e.g. Frontend Developer"
-            className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-2.5
-                       text-text placeholder-white/20 text-sm
-                       focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
-                       transition-colors duration-200"
           />
-        </div>
+        </Field>
 
-        <div>
-          <label
-            htmlFor="location"
-            className="block text-sm font-medium text-secondary mb-1.5"
-          >
-            Location
-          </label>
-          <input
+        <Field label="Location" htmlFor="location">
+          <TextInput
             id="location"
             type="text"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             placeholder="e.g. Paris, France"
-            className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-2.5
-                       text-text placeholder-white/20 text-sm
-                       focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
-                       transition-colors duration-200"
           />
-        </div>
+        </Field>
 
-        <div>
-          <label
-            htmlFor="jobAdUrl"
-            className="block text-sm font-medium text-secondary mb-1.5"
-          >
-            Job ad URL
-          </label>
-          <input
+        <Field label="Job ad URL" htmlFor="jobAdUrl">
+          <TextInput
             id="jobAdUrl"
             type="url"
             value={jobAdUrl}
             onChange={(e) => setJobAdUrl(e.target.value)}
             placeholder="https://..."
-            className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-2.5
-                       text-text placeholder-white/20 text-sm
-                       focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
-                       transition-colors duration-200"
           />
-        </div>
+        </Field>
 
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label
-              htmlFor="salaryExpected"
-              className="block text-sm font-medium text-secondary mb-1.5"
-            >
-              Salary expected
-            </label>
+          <Field label="Salary expected" htmlFor="salaryExpected">
             <div className="flex gap-2">
-              <input
+              <TextInput
                 id="salaryExpected"
                 type="text"
                 value={salaryExpected}
                 onChange={(e) => setSalaryExpected(e.target.value)}
                 placeholder="e.g. 55000"
-                className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-2.5
-                           text-text placeholder-white/20 text-sm
-                           focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
-                           transition-colors duration-200"
+                className="min-w-0 flex-1"
               />
-              <input
+              <TextInput
                 type="text"
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
                 placeholder="€"
                 aria-label="Currency"
-                className="w-14 shrink-0 bg-white/[0.06] border border-white/10 rounded-lg px-2 py-2.5
-                           text-text text-center placeholder-white/20 text-sm
-                           focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
-                           transition-colors duration-200"
+                className="!w-14 shrink-0 !px-2 text-center"
               />
             </div>
-          </div>
+          </Field>
 
-          <div>
-            <label
-              htmlFor="appliedDate"
-              className="block text-sm font-medium text-secondary mb-1.5"
-            >
-              Applied on
-            </label>
-            <input
+          <Field label="Applied on" htmlFor="appliedDate">
+            <TextInput
               id="appliedDate"
               type="date"
               value={appliedDate}
               onChange={(e) => setAppliedDate(e.target.value)}
-              className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-2.5
-                         text-text text-sm
-                         focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
-                         transition-colors duration-200"
             />
-          </div>
+          </Field>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label
-              htmlFor="jobType"
-              className="block text-sm font-medium text-secondary mb-1.5"
-            >
-              Job type
-            </label>
-            <select
+          <Field label="Job type" htmlFor="jobType">
+            <Select
               id="jobType"
               value={jobType}
               onChange={(e) => setJobType(e.target.value)}
-              className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-2.5
-                         text-text text-sm appearance-none
-                         focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
-                         transition-colors duration-200"
             >
-              <option value="" className="bg-[#0d1528]">
-                None
-              </option>
-              <option value="C" className="bg-[#0d1528]">
-                City
-              </option>
-              <option value="H" className="bg-[#0d1528]">
-                Hybrid
-              </option>
-              <option value="R" className="bg-[#0d1528]">
-                Remote
-              </option>
-            </select>
-          </div>
+              <option value="">None</option>
+              <option value="C">City</option>
+              <option value="H">Hybrid</option>
+              <option value="R">Remote</option>
+            </Select>
+          </Field>
 
-          <div>
-            <label
-              htmlFor="status"
-              className="block text-sm font-medium text-secondary mb-1.5"
-            >
-              Status
-            </label>
-            <select
+          <Field label="Status" htmlFor="status">
+            <Select
               id="status"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-2.5
-                         text-text text-sm appearance-none
-                         focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
-                         transition-colors duration-200"
             >
-              <option value="T" className="bg-[#0d1528]">
-                To Apply
-              </option>
-              <option value="A" className="bg-[#0d1528]">
-                Applied
-              </option>
-              <option value="I" className="bg-[#0d1528]">
-                Interviewing
-              </option>
-              <option value="R" className="bg-[#0d1528]">
-                Rejected
-              </option>
-              <option value="O" className="bg-[#0d1528]">
-                Offer
-              </option>
-            </select>
-          </div>
+              <option value="T">To Apply</option>
+              <option value="A">Applied</option>
+              <option value="I">Interviewing</option>
+              <option value="R">Rejected</option>
+              <option value="O">Offer</option>
+            </Select>
+          </Field>
         </div>
 
-        <div>
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium text-secondary mb-1.5"
-          >
-            Description
-          </label>
-          <textarea
+        <Field label="Description" htmlFor="description">
+          <TextArea
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Paste or type the job description here…"
             rows={6}
-            className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-2.5
-                       text-text placeholder-white/20 text-sm resize-none
-                       focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
-                       transition-colors duration-200"
           />
-        </div>
+        </Field>
 
         {error && (
           <p className="text-accent text-sm bg-accent/10 border border-accent/20 rounded-lg px-4 py-2.5">
@@ -313,15 +205,14 @@ function NewApplicationModal({ isOpen, onClose, profileId }) {
           </p>
         )}
 
-        <button
+        <Button
           type="submit"
+          variant="gradient"
+          fullWidth
           disabled={createApplicationMutation.isPending}
-          className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed
-                     text-white font-semibold py-2.5 rounded-lg text-sm
-                     transition-all duration-200 shadow-lg shadow-primary/20"
         >
           {createApplicationMutation.isPending ? "Adding…" : "Add application"}
-        </button>
+        </Button>
       </form>
     </Modal>
   );

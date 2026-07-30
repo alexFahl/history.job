@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { JOB_TYPE_LABELS } from "../../utils/constants";
 import { formatDate } from "../../utils/formatDate";
+import Button from "./Button";
 
 /**
  * EditableInfoSection
@@ -66,7 +67,7 @@ function EditableInfoSection({ application, onSave, isSaving, statusSlot }) {
     "transition-colors duration-200";
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/[0.14] via-white/[0.03] to-transparent p-6 shadow-[0_0_0_1px_rgba(48,103,253,0.05)]">
+    <div className="relative overflow-hidden rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/[0.14] via-white/[0.03] to-transparent p-6 shadow-glow-sm">
       {/* Decorative corner glow — reinforces the "featured" hero feel */}
       <div className="pointer-events-none absolute -top-16 -right-10 h-40 w-40 rounded-full bg-primary/20 blur-3xl" />
 
@@ -223,16 +224,16 @@ function EditableInfoSection({ application, onSave, isSaving, statusSlot }) {
                 onChange={updateDraft("jobType")}
                 className={`${inputClasses} appearance-none`}
               >
-                <option value="" className="bg-[#0d1528]">
+                <option value="" className="bg-surface">
                   None
                 </option>
-                <option value="C" className="bg-[#0d1528]">
+                <option value="C" className="bg-surface">
                   City
                 </option>
-                <option value="H" className="bg-[#0d1528]">
+                <option value="H" className="bg-surface">
                   Hybrid
                 </option>
-                <option value="R" className="bg-[#0d1528]">
+                <option value="R" className="bg-surface">
                   Remote
                 </option>
               </select>
@@ -290,15 +291,13 @@ function EditableInfoSection({ application, onSave, isSaving, statusSlot }) {
 
           {/* Cancel / Confirm */}
           <div className="flex items-center gap-3 pt-1">
-            <button
-              type="button"
+            <Button
+              variant="primary"
               onClick={handleConfirm}
               disabled={isSaving}
-              className="bg-primary hover:bg-primary/90 disabled:opacity-50 text-white text-sm
-                         font-semibold px-4 py-2 rounded-lg transition-colors duration-200"
             >
               {isSaving ? "Saving…" : "Confirm"}
-            </button>
+            </Button>
             <button
               type="button"
               onClick={handleCancel}

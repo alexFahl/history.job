@@ -5,8 +5,20 @@
   "description": "Captures job application data from web pages and saves it to your History.job account.",
   "permissions": ["activeTab", "scripting", "storage"],
   "host_permissions": ["http://*/*", "https://*/*"],
+  "icons": {
+    "16": "icons/HJ_black_16.png",
+    "32": "icons/HJ_black_32.png",
+    "48": "icons/HJ_black_48.png",
+    "128": "icons/HJ_black_128.png"
+  },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/HJ_black_16.png",
+      "32": "icons/HJ_black_32.png",
+      "48": "icons/HJ_black_48.png",
+      "128": "icons/HJ_black_128.png"
+    }
   },
   "background": {
     "service_worker": "background.js"

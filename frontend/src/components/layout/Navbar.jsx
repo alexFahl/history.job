@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import useAuthStore from "../../store/authStore";
 import useUiStore from "../../store/uiStore";
 import LiveClock from "../common/LiveClock";
+import Button from "../common/Button";
+import { CloseIcon } from "../common/icons";
 import { getCountryList } from "../../utils/timezones";
 import { STATUS_ORDER, STATUS_LABELS } from "../../utils/constants";
 
@@ -18,9 +20,9 @@ const LOCAL_TIMEZONE = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const STATUS_DOT_COLORS = {
   T: "bg-secondary",
   A: "bg-primary",
-  I: "bg-accent",
-  R: "bg-red-400",
-  O: "bg-emerald-400",
+  I: "bg-warning",
+  R: "bg-danger",
+  O: "bg-success",
 };
 
 /**
@@ -110,20 +112,7 @@ function Navbar() {
           className="absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-lg
                      text-secondary hover:text-text hover:bg-white/[0.06] transition-colors lg:hidden"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={1.7}
-            className="h-5 w-5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18 18 6M6 6l12 12"
-            />
-          </svg>
+          <CloseIcon className="h-5 w-5" strokeWidth={1.7} />
         </button>
 
         {/* Profile card */}
@@ -143,7 +132,7 @@ function Navbar() {
           )}
 
           {/* Info panel */}
-          <div className="bg-white/[0.04] p-5">
+          <div className="bg-surface-2/60 p-5">
             <p className="text-xs text-secondary truncate">
               {countryName ?? "No profile selected"}
             </p>
@@ -312,22 +301,20 @@ function Navbar() {
 
         {/* Actions pinned to the bottom */}
         <div className="mt-auto pt-6 space-y-2">
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="sm"
+            fullWidth
             onClick={handleChangeProfile}
-            className="w-full rounded-lg border border-white/10 hover:border-white/20 bg-white/[0.04]
-                     hover:bg-white/[0.08] px-3 py-2 text-sm text-secondary hover:text-text
-                     transition-colors duration-150"
           >
             Change profile
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="danger-soft"
+            size="sm"
+            fullWidth
             onClick={handleLogout}
             aria-label="Log out"
-            className="flex w-full items-center justify-center gap-2 rounded-lg border border-red-500/40
-                     hover:border-red-500/60 bg-red-500/10 hover:bg-red-500/20 px-3 py-2 text-sm
-                     text-red-400 hover:text-red-300 transition-colors duration-150"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -344,7 +331,7 @@ function Navbar() {
               />
             </svg>
             Log out
-          </button>
+          </Button>
         </div>
       </aside>
     </>

@@ -24,7 +24,7 @@ function StatusDropdown({ value, onChange }) {
                     transition-shadow ${STATUS_COLORS[value]}`}
       >
         {STATUS_ORDER.map((code) => (
-          <option key={code} value={code} className="bg-[#0d1528] text-text">
+          <option key={code} value={code} className="bg-surface text-text">
             {STATUS_LABELS[code]}
           </option>
         ))}

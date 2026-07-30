@@ -8,6 +8,7 @@ import {
 import { formatDateTime } from "../../utils/formatDate";
 import { CHANNEL_LABELS } from "../../utils/constants";
 import Modal from "./Modal";
+import Button from "./Button";
 
 /**
  * TimelineSection
@@ -235,15 +236,15 @@ function TimelineSection({ application }) {
             className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-3 py-2
                        text-text placeholder-white/20 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
           />
-          <button
+          <Button
             type="submit"
+            variant="primary"
+            fullWidth
             disabled={
               activeForm === "reply"
                 ? addReplyMutation.isPending
                 : addFollowUpMutation.isPending
             }
-            className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50
-                       text-white text-sm font-medium py-2 rounded-lg transition-colors duration-200"
           >
             {activeForm === "reply"
               ? addReplyMutation.isPending
@@ -252,7 +253,7 @@ function TimelineSection({ application }) {
               : addFollowUpMutation.isPending
                 ? "Saving…"
                 : "Log follow-up"}
-          </button>
+          </Button>
         </form>
       </Modal>
     </>

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { CloseIcon } from "./icons";
 
 /**
  * Modal
@@ -28,26 +29,33 @@ function Modal({ isOpen, onClose, title, children }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md px-4"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md bg-[#0d1528] border border-white/10 rounded-2xl p-6 shadow-2xl"
+        className="animate-pop-in relative w-full max-w-md overflow-hidden rounded-3xl border border-white/10
+                   bg-surface/95 p-6 shadow-card ring-1 ring-white/5"
         onClick={(e) => e.stopPropagation()} // Prevent backdrop click from closing when clicking inside
       >
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-text">{title}</h2>
+        {/* Ambient brand glow in the corner */}
+        <div className="pointer-events-none absolute -top-16 -right-12 h-40 w-40 rounded-full bg-primary/20 blur-3xl" />
+
+        <div className="relative mb-6 flex items-center justify-between">
+          <h2 className="text-lg font-semibold tracking-tight text-text">
+            {title}
+          </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close modal"
-            className="text-secondary hover:text-text transition-colors duration-150 text-xl leading-none"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-secondary
+                       transition-colors duration-150 hover:bg-white/[0.06] hover:text-text"
           >
-            &times;
+            <CloseIcon className="h-5 w-5" />
           </button>
         </div>
 
-        {children}
+        <div className="relative">{children}</div>
       </div>
     </div>
   );

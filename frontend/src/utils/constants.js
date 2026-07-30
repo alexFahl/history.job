@@ -18,9 +18,9 @@ export const STATUS_ORDER = ["T", "A", "I", "R", "O"];
 export const STATUS_COLORS = {
   T: "bg-secondary/20 text-secondary",
   A: "bg-primary/20 text-primary",
-  I: "bg-accent/20 text-accent",
-  R: "bg-red-500/20 text-red-400",
-  O: "bg-emerald-500/20 text-emerald-400",
+  I: "bg-warning/20 text-warning",
+  R: "bg-danger/20 text-danger",
+  O: "bg-success/20 text-success",
 };
 
 // Job type

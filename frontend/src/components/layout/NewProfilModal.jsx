@@ -1,5 +1,7 @@
 import { useState } from "react";
 import Modal from "../common/Modal";
+import Button from "../common/Button";
+import { Field, TextInput, Select } from "../common/Field";
 import { profileSchema } from "../../schemas/profileSchema";
 import { useCreateProfile } from "../../hooks/useProfiles";
 import { getCountryList, getTimezoneForCountry } from "../../utils/timezones";
@@ -64,52 +66,30 @@ function NewProfileModal({ isOpen, onClose }) {
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title="Add a new profile">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label
-            htmlFor="profileName"
-            className="block text-sm font-medium text-secondary mb-1.5"
-          >
-            Profile name
-          </label>
-          <input
+        <Field label="Profile name" htmlFor="profileName">
+          <TextInput
             id="profileName"
             type="text"
             value={profileName}
             onChange={(e) => setProfileName(e.target.value)}
             placeholder="e.g. Web Developer"
-            className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-2.5
-                       text-text placeholder-white/20 text-sm
-                       focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
-                       transition-colors duration-200"
           />
-        </div>
+        </Field>
 
-        <div>
-          <label
-            htmlFor="country"
-            className="block text-sm font-medium text-secondary mb-1.5"
-          >
-            Country
-          </label>
-          <select
+        <Field label="Country" htmlFor="country">
+          <Select
             id="country"
             value={country}
             onChange={(e) => setCountry(e.target.value)}
-            className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-2.5
-                       text-text text-sm appearance-none
-                       focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
-                       transition-colors duration-200"
           >
-            <option value="" className="bg-[#0d1528]">
-              Select a country…
-            </option>
+            <option value="">Select a country…</option>
             {COUNTRIES.map((c) => (
-              <option key={c.id} value={c.id} className="bg-[#0d1528]">
+              <option key={c.id} value={c.id}>
                 {c.name}
               </option>
             ))}
-          </select>
-        </div>
+          </Select>
+        </Field>
 
         {error && (
           <p className="text-accent text-sm bg-accent/10 border border-accent/20 rounded-lg px-4 py-2.5">
@@ -117,15 +97,14 @@ function NewProfileModal({ isOpen, onClose }) {
           </p>
         )}
 
-        <button
+        <Button
           type="submit"
+          variant="gradient"
+          fullWidth
           disabled={createProfileMutation.isPending}
-          className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed
-                     text-white font-semibold py-2.5 rounded-lg text-sm
-                     transition-all duration-200 shadow-lg shadow-primary/20"
         >
           {createProfileMutation.isPending ? "Creating…" : "Create profile"}
-        </button>
+        </Button>
       </form>
     </Modal>
   );

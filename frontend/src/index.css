@@ -4,38 +4,73 @@
 @tailwind utilities;
 
 /*
-  Global base styles using the CDC colour palette.
-  bg-background and text-text are defined in tailwind.config.js.
-  Applying them here ensures the dark theme is consistent on every page.
+  Global base styles.
+  Colour tokens (background, text, primary…) are defined in tailwind.config.js.
 */
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background text-text;
-    font-family:
-      system-ui,
-      -apple-system,
-      sans-serif;
+    @apply bg-background text-text font-sans antialiased;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Ambient brand glow baked into the page background */
+    background-image:
+      radial-gradient(
+        ellipse 80% 50% at 50% -10%,
+        rgba(124, 92, 255, 0.14),
+        transparent
+      ),
+      radial-gradient(
+        ellipse 60% 50% at 100% 100%,
+        rgba(251, 113, 133, 0.08),
+        transparent
+      );
+    background-attachment: fixed;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+  }
+
+  /* Native dropdown options — keep them on-theme regardless of utility classes */
+  option {
+    background-color: #141122 !important;
+    color: #eef0fb;
+  }
+
+  /* Text selection */
+  ::selection {
+    background: rgba(124, 92, 255, 0.35);
+    color: #ffffff;
   }
 
   /* Custom scrollbar — dark theme */
   ::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
+    height: 8px;
   }
   ::-webkit-scrollbar-track {
-    background: #0d1528;
+    background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #3067fd40;
-    border-radius: 3px;
+    background: rgba(124, 92, 255, 0.28);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: content-box;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #3067fd;
+    background: rgba(124, 92, 255, 0.6);
+    background-clip: content-box;
   }
 }
 
 /*
-  Custom animations & utilities used by the auth page
+  Custom animations & utilities
 */
 @layer utilities {
   /* Fade + rise used for staggered content entrance */
@@ -50,14 +85,15 @@
     }
   }
 
-  /* Sheen sweep across the submit button */
-  @keyframes sheen {
-    0% {
-      transform: translateX(-150%) skewX(-12deg);
+  /* Scale + fade used for cards / modals */
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.97);
     }
-    60%,
-    100% {
-      transform: translateX(250%) skewX(-12deg);
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
     }
   }
 
@@ -65,18 +101,38 @@
     animation: fade-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
+  .animate-pop-in {
+    animation: pop-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Frosted glass surface */
+  .glass {
+    @apply border border-white/10 bg-white/[0.04] backdrop-blur-xl;
+  }
+
+  /* Animated gradient text */
+  .text-gradient {
+    @apply bg-brand-gradient bg-clip-text text-transparent;
+    background-size: 200% 200%;
+  }
+
   /* Subtle dotted grid overlay */
   .bg-grid-dots {
     background-image: radial-gradient(
-      rgba(255, 255, 255, 0.12) 1px,
+      rgba(255, 255, 255, 0.1) 1px,
       transparent 1px
     );
-    background-size: 22px 22px;
+    background-size: 24px 24px;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .animate-fade-rise {
-      animation: none;
+    .animate-fade-rise,
+    .animate-pop-in,
+    .animate-aurora,
+    .animate-aurora-alt,
+    .animate-float,
+    .animate-gradient-pan {
+      animation: none !important;
     }
   }
 }

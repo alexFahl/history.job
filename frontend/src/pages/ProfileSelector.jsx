@@ -11,6 +11,9 @@ import { profileSchema } from "../schemas/profileSchema";
 import { getCountryList, getTimezoneForCountry } from "../utils/timezones";
 import Modal from "../components/common/Modal";
 import LiveClock from "../components/common/LiveClock";
+import Button from "../components/common/Button";
+import { Field, TextInput, Select } from "../components/common/Field";
+import { PlusIcon, TrashIcon } from "../components/common/icons";
 
 // Precompute the country list once at module load because it never changes
 const COUNTRIES = getCountryList();
@@ -158,52 +161,48 @@ function ProfileSelector() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col px-6 py-8">
+    <div className="relative min-h-screen overflow-hidden bg-background flex flex-col px-6 py-8">
+      {/* Ambient animated background */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="animate-aurora absolute -top-32 -left-24 h-96 w-96 rounded-full bg-primary/25 blur-[130px]" />
+        <div className="animate-aurora-alt absolute top-1/3 -right-24 h-[26rem] w-[26rem] rounded-full bg-accent/15 blur-[140px]" />
+        <div className="bg-grid-dots absolute inset-0 opacity-[0.15] [mask-image:radial-gradient(ellipse_at_center,black,transparent_80%)]" />
+      </div>
+
       {/* Header */}
-      <header className="max-w-6xl w-full mx-auto flex items-center justify-between gap-4">
+      <header className="relative max-w-6xl w-full mx-auto flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-text">
-            Welcome back, <span className="text-primary">{user?.username}</span>
+          <h1 className="text-2xl font-bold tracking-tight text-text sm:text-3xl">
+            Welcome back,{" "}
+            <span className="text-gradient animate-gradient-pan">
+              {user?.username}
+            </span>
           </h1>
-          <p className="text-secondary text-sm mt-1">
+          <p className="text-secondary text-sm mt-1.5">
             Choose a profile to continue, or create a new one.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           {/* Dedicated "create profile" action — kept out of the carousel */}
-          <button
-            type="button"
+          <Button
+            variant="gradient"
+            rounded="rounded-xl"
             onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center gap-2 rounded-xl bg-primary/90 hover:bg-primary
-                       px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/20
-                       transition-all duration-200"
+            className="group"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              className="w-4 h-4"
-            >
-              <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
-            </svg>
+            <PlusIcon className="w-4 h-4 transition-transform duration-300 group-hover:rotate-90" />
             New profile
-          </button>
+          </Button>
 
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="rounded-xl border border-white/10 hover:border-white/20 bg-white/[0.04]
-                       hover:bg-white/[0.08] px-4 py-2.5 text-sm text-secondary hover:text-text
-                       transition-colors duration-150"
-          >
+          <Button variant="ghost" rounded="rounded-xl" onClick={handleLogout}>
             Log out
-          </button>
+          </Button>
         </div>
       </header>
 
       {/* Content */}
-      <main className="flex-1 flex flex-col items-center justify-center py-8">
+      <main className="relative flex-1 flex flex-col items-center justify-center py-8">
         {isLoading && (
           <p className="text-secondary text-center">Loading profiles…</p>
         )}
@@ -237,15 +236,14 @@ function ProfileSelector() {
             <p className="mt-2 text-sm text-secondary">
               Create your first profile to start tracking applications.
             </p>
-            <button
-              type="button"
+            <Button
+              variant="gradient"
+              rounded="rounded-xl"
               onClick={() => setIsModalOpen(true)}
-              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-primary hover:bg-primary/90
-                         px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary/20
-                         transition-all duration-200"
+              className="mt-6"
             >
               Create a profile
-            </button>
+            </Button>
           </div>
         )}
 
@@ -335,15 +333,20 @@ function ProfileSelector() {
                             ? handleSelectProfile(profile)
                             : setActiveIndex(index)
                         }
-                        className={`relative w-[20rem] shrink-0 rounded-3xl border p-8 text-left
+                        className={`relative w-[20rem] shrink-0 rounded-4xl border p-8 text-left
                                     transition-all duration-500 cursor-pointer
-                                    flex flex-col
+                                    flex flex-col overflow-hidden
                                     ${
                                       isActive
-                                        ? "h-[30rem] scale-100 opacity-100 border-primary/40 bg-white/[0.06] shadow-2xl shadow-black/40"
+                                        ? "h-[30rem] scale-100 opacity-100 border-primary/40 bg-surface/80 shadow-card ring-1 ring-primary/20"
                                         : "h-[26rem] scale-90 opacity-40 border-white/10 bg-white/[0.03] hover:opacity-70"
                                     }`}
                       >
+                        {/* Brand glow on the active card */}
+                        {isActive && (
+                          <div className="pointer-events-none absolute -top-20 -right-16 h-48 w-48 rounded-full bg-primary/25 blur-3xl" />
+                        )}
+
                         {/* Delete button — only interactive on the active card */}
                         {isActive && (
                           <button
@@ -353,18 +356,7 @@ function ProfileSelector() {
                             className="absolute top-5 right-5 z-10 p-2.5 rounded-lg text-secondary
                                        hover:text-accent hover:bg-white/[0.06] transition-colors duration-150"
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                              className="w-6 h-6"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M8.75 1a.75.75 0 0 0-.75.75V2h-3.5a.75.75 0 0 0 0 1.5h.564l.62 10.548A2.75 2.75 0 0 0 8.427 17h3.146a2.75 2.75 0 0 0 2.743-2.952l.62-10.548h.564a.75.75 0 0 0 0-1.5h-3.5v-.25a.75.75 0 0 0-.75-.75h-2.5ZM8.5 6.75a.75.75 0 0 1 1.5 0v6.5a.75.75 0 0 1-1.5 0v-6.5Zm3.75-.75a.75.75 0 0 0-.75.75v6.5a.75.75 0 0 0 1.5 0v-6.5a.75.75 0 0 0-.75-.75Z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
+                            <TrashIcon className="w-6 h-6" />
                           </button>
                         )}
 
@@ -475,15 +467,16 @@ function ProfileSelector() {
 
             {/* Select button */}
             <div className="mt-4 flex justify-center">
-              <button
-                type="button"
+              <Button
+                variant="gradient"
+                size="lg"
+                rounded="rounded-xl"
+                fullWidth
                 onClick={() => handleSelectProfile(profiles[activeIndex])}
-                className="w-full max-w-[20rem] rounded-xl bg-primary hover:bg-primary/90
-                           py-3.5 text-base font-bold uppercase tracking-wide text-white
-                           shadow-lg shadow-primary/25 transition-all duration-200"
+                className="max-w-[20rem] uppercase tracking-wide"
               >
                 Select
-              </button>
+              </Button>
             </div>
 
             {/* Pagination dots */}
@@ -515,52 +508,30 @@ function ProfileSelector() {
         title="Add a new profile"
       >
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label
-              htmlFor="profileName"
-              className="block text-sm font-medium text-secondary mb-1.5"
-            >
-              Profile name
-            </label>
-            <input
+          <Field label="Profile name" htmlFor="profileName">
+            <TextInput
               id="profileName"
               type="text"
               value={profileName}
               onChange={(e) => setProfileName(e.target.value)}
               placeholder="e.g. Web Developer"
-              className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-2.5
-                         text-text placeholder-white/20 text-sm
-                         focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
-                         transition-colors duration-200"
             />
-          </div>
+          </Field>
 
-          <div>
-            <label
-              htmlFor="country"
-              className="block text-sm font-medium text-secondary mb-1.5"
-            >
-              Country
-            </label>
-            <select
+          <Field label="Country" htmlFor="country">
+            <Select
               id="country"
               value={country}
               onChange={(e) => setCountry(e.target.value)}
-              className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-4 py-2.5
-                         text-text text-sm appearance-none
-                         focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary
-                         transition-colors duration-200"
             >
-              <option value="" className="bg-[#0d1528]">
-                Select a country…
-              </option>
+              <option value="">Select a country…</option>
               {COUNTRIES.map((c) => (
-                <option key={c.id} value={c.id} className="bg-[#0d1528]">
+                <option key={c.id} value={c.id}>
                   {c.name}
                 </option>
               ))}
-            </select>
-          </div>
+            </Select>
+          </Field>
 
           {formError && (
             <p className="text-accent text-sm bg-accent/10 border border-accent/20 rounded-lg px-4 py-2.5">
@@ -568,15 +539,14 @@ function ProfileSelector() {
             </p>
           )}
 
-          <button
+          <Button
             type="submit"
+            variant="gradient"
+            fullWidth
             disabled={createProfileMutation.isPending}
-            className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed
-                       text-white font-semibold py-2.5 rounded-lg text-sm
-                       transition-all duration-200 shadow-lg shadow-primary/20"
           >
             {createProfileMutation.isPending ? "Creating…" : "Create profile"}
-          </button>
+          </Button>
         </form>
       </Modal>
 
@@ -608,24 +578,22 @@ function ProfileSelector() {
           )}
 
           <div className="flex items-center gap-3">
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              fullWidth
               onClick={handleCancelDelete}
-              className="flex-1 bg-white/[0.06] hover:bg-white/[0.1] text-text text-sm
-                         font-semibold py-2.5 rounded-lg transition-colors duration-200"
+              className="text-text"
             >
               Cancel
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              variant="danger"
+              fullWidth
               onClick={handleConfirmDelete}
               disabled={deleteProfileMutation.isPending}
-              className="flex-1 bg-accent hover:bg-accent/90 disabled:opacity-50 disabled:cursor-not-allowed
-                         text-white font-semibold py-2.5 rounded-lg text-sm
-                         transition-all duration-200"
             >
               {deleteProfileMutation.isPending ? "Deleting…" : "Delete profile"}
-            </button>
+            </Button>
           </div>
         </div>
       </Modal>

@@ -7,23 +7,29 @@ import Navbar from "../components/layout/Navbar";
 import ApplicationCard from "../components/common/ApplicationCard";
 import NewApplicationModal from "../components/layout/NewApplicationModal";
 import Loader from "../components/common/Loader";
+import Button from "../components/common/Button";
+import {
+  PlusIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "../components/common/icons";
 
 // Solid accent colour per Kanban status (top bar + header dot)
 const STATUS_ACCENTS = {
   T: "bg-secondary",
   A: "bg-primary",
-  I: "bg-accent",
-  R: "bg-red-400",
-  O: "bg-emerald-400",
+  I: "bg-warning",
+  R: "bg-danger",
+  O: "bg-success",
 };
 
 // Text colour per status (column header icon)
 const STATUS_TEXT_COLORS = {
   T: "text-secondary",
   A: "text-primary",
-  I: "text-accent",
-  R: "text-red-400",
-  O: "text-emerald-400",
+  I: "text-warning",
+  R: "text-danger",
+  O: "text-success",
 };
 
 // Icon path per status (heroicons outline)
@@ -52,7 +58,8 @@ const STAT_TONES = {
     glow: "bg-secondary/30",
   },
   accent: { chip: "bg-accent/15 text-accent", glow: "bg-accent/30" },
-  red: { chip: "bg-red-400/15 text-red-400", glow: "bg-red-400/30" },
+  warning: { chip: "bg-warning/15 text-warning", glow: "bg-warning/30" },
+  red: { chip: "bg-danger/15 text-danger", glow: "bg-danger/30" },
 };
 
 // Per-column pagination — how many cards to show at once
@@ -105,8 +112,14 @@ function Dashboard() {
     <div className="min-h-screen bg-background flex">
       <Navbar />
 
-      <main className="flex-1 min-w-0">
-        <div className="max-w-[100rem] mx-auto px-6 py-8">
+      <main className="relative flex-1 min-w-0 overflow-hidden">
+        {/* Ambient background */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="animate-aurora absolute -top-40 left-1/4 h-96 w-96 rounded-full bg-primary/15 blur-[150px]" />
+          <div className="absolute top-1/2 right-0 h-80 w-80 rounded-full bg-accent/10 blur-[150px]" />
+        </div>
+
+        <div className="relative max-w-[100rem] mx-auto px-6 py-8">
           {/* Stats bar */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
             <StatCard
@@ -125,7 +138,7 @@ function Dashboard() {
             <StatCard
               label="Interviewing"
               value={stats.interviewing}
-              tone="accent"
+              tone="warning"
               icon={STATUS_ICONS.I}
             />
             <StatCard
@@ -138,16 +151,16 @@ function Dashboard() {
 
           {/* Toolbar: divider + add application (same row) */}
           <div className="flex items-center gap-4 mb-6">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-white/20" />
-            <button
-              type="button"
+            <div className="h-px flex-1 bg-gradient-to-r from-white/10 via-white/20 to-white/30" />
+            <Button
+              variant="gradient"
+              rounded="rounded-xl"
               onClick={() => setIsModalOpen(true)}
-              className="bg-primary hover:bg-primary/90 text-white font-semibold text-sm
-                       px-5 py-2.5 rounded-lg shadow-lg shadow-primary/20
-                       transition-all duration-200 whitespace-nowrap"
+              className="group whitespace-nowrap"
             >
-              + Add application
-            </button>
+              <PlusIcon className="h-4 w-4 transition-transform duration-300 group-hover:rotate-90" />
+              Add application
+            </Button>
           </div>
 
           {/* Loading / error states */}
@@ -222,8 +235,8 @@ function KanbanColumn({ statusCode, applications }) {
 
   return (
     <div
-      className="flex-1 min-w-[240px] flex flex-col overflow-hidden rounded-2xl
-               border border-white/[0.06] bg-white/[0.02]"
+      className="flex-1 min-w-[240px] flex flex-col overflow-hidden rounded-3xl
+               border border-white/[0.07] bg-surface/40 backdrop-blur-sm"
     >
       {/* Coloured accent bar */}
       <div className={`h-1 w-full ${STATUS_ACCENTS[statusCode]}`} />
@@ -279,7 +292,7 @@ function KanbanColumn({ statusCode, applications }) {
                          appearance-none cursor-pointer focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
             >
               {PAGE_SIZE_OPTIONS.map((opt) => (
-                <option key={opt} value={opt} className="bg-[#0d1528]">
+                <option key={opt} value={opt} className="bg-surface">
                   {opt}
                 </option>
               ))}
@@ -297,18 +310,7 @@ function KanbanColumn({ statusCode, applications }) {
                            text-secondary hover:border-white/20 hover:text-text transition-colors duration-150
                            disabled:opacity-30 disabled:hover:border-white/10"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  className="h-4 w-4"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M12.79 5.23a.75.75 0 0 1 0 1.06L9.06 10l3.73 3.71a.75.75 0 1 1-1.06 1.06l-4.25-4.24a.75.75 0 0 1 0-1.06l4.25-4.24a.75.75 0 0 1 1.06 0Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <ChevronLeftIcon className="h-4 w-4" />
               </button>
               <span className="text-xs font-medium text-secondary tabular-nums">
                 {currentPage} / {totalPages}
@@ -322,18 +324,7 @@ function KanbanColumn({ statusCode, applications }) {
                            text-secondary hover:border-white/20 hover:text-text transition-colors duration-150
                            disabled:opacity-30 disabled:hover:border-white/10"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  className="h-4 w-4"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M7.21 14.77a.75.75 0 0 1 0-1.06L10.94 10 7.21 6.29a.75.75 0 1 1 1.06-1.06l4.25 4.24a.75.75 0 0 1 0 1.06l-4.25 4.24a.75.75 0 0 1-1.06 0Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                <ChevronRightIcon className="h-4 w-4" />
               </button>
             </div>
           )}
@@ -354,7 +345,7 @@ function StatCard({ label, value, tone = "primary", icon, featured = false }) {
     <div
       className={`group relative overflow-hidden rounded-2xl p-4 transition-all duration-300 ${
         featured
-          ? "border border-primary/30 bg-gradient-to-br from-primary/[0.16] via-white/[0.03] to-transparent shadow-[0_0_0_1px_rgba(48,103,253,0.06)] hover:border-primary/50"
+          ? "border border-primary/30 bg-gradient-to-br from-primary/[0.16] via-white/[0.03] to-transparent shadow-glow-sm hover:border-primary/50"
           : "border border-white/[0.08] bg-white/[0.02] hover:border-white/[0.14] hover:bg-white/[0.03]"
       }`}
     >

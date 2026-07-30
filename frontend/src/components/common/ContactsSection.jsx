@@ -4,6 +4,8 @@ import {
   useDeleteContact,
 } from "../../hooks/useApplicationDetail";
 import Modal from "./Modal";
+import Button from "./Button";
+import { TextInput } from "./Field";
 
 /**
  * ContactsSection
@@ -122,54 +124,42 @@ function ContactsSection({ application }) {
       {/* Add contact modal */}
       <Modal isOpen={isFormOpen} onClose={resetForm} title="Add a contact">
         <form onSubmit={handleSubmit} className="space-y-3">
-          <input
+          <TextInput
             type="text"
             placeholder="Name *"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
             autoFocus
-            className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-3 py-2
-                       text-text placeholder-white/20 text-sm
-                       focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
           />
           <div className="grid grid-cols-2 gap-2">
-            <input
+            <TextInput
               type="email"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="bg-white/[0.06] border border-white/10 rounded-lg px-3 py-2
-                         text-text placeholder-white/20 text-sm
-                         focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
             />
-            <input
+            <TextInput
               type="tel"
               placeholder="Phone"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="bg-white/[0.06] border border-white/10 rounded-lg px-3 py-2
-                         text-text placeholder-white/20 text-sm
-                         focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
             />
           </div>
-          <input
+          <TextInput
             type="text"
             placeholder="Role (e.g. HR Manager)"
             value={job}
             onChange={(e) => setJob(e.target.value)}
-            className="w-full bg-white/[0.06] border border-white/10 rounded-lg px-3 py-2
-                       text-text placeholder-white/20 text-sm
-                       focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
           />
-          <button
+          <Button
             type="submit"
+            variant="primary"
+            fullWidth
             disabled={addContactMutation.isPending}
-            className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50
-                       text-white text-sm font-medium py-2 rounded-lg transition-colors duration-200"
           >
             {addContactMutation.isPending ? "Adding…" : "Save contact"}
-          </button>
+          </Button>
         </form>
       </Modal>
     </>
