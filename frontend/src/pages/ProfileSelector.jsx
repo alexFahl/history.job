@@ -170,7 +170,7 @@ function ProfileSelector() {
       </div>
 
       {/* Header */}
-      <header className="relative max-w-6xl w-full mx-auto flex items-center justify-between gap-4">
+      <header className="relative max-w-6xl w-full mx-auto flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-text sm:text-3xl">
             Welcome back,{" "}
@@ -314,7 +314,7 @@ function ProfileSelector() {
               )}
 
               {/* Track viewport — fixed height so the layout below stays put */}
-              <div className="h-[34rem] overflow-hidden">
+              <div className="h-[26rem] overflow-hidden sm:h-[34rem]">
                 <div
                   className="flex h-full items-center gap-8 transition-transform duration-500 ease-out"
                   style={{
@@ -333,13 +333,13 @@ function ProfileSelector() {
                             ? handleSelectProfile(profile)
                             : setActiveIndex(index)
                         }
-                        className={`relative w-[20rem] shrink-0 rounded-4xl border p-8 text-left
+                        className={`relative w-[20rem] shrink-0 rounded-4xl border p-6 text-left
                                     transition-all duration-500 cursor-pointer
-                                    flex flex-col overflow-hidden
+                                    flex flex-col overflow-hidden sm:p-8
                                     ${
                                       isActive
-                                        ? "h-[30rem] scale-100 opacity-100 border-primary/40 bg-surface/80 shadow-card ring-1 ring-primary/20"
-                                        : "h-[26rem] scale-90 opacity-40 border-white/10 bg-white/[0.03] hover:opacity-70"
+                                        ? "h-[24rem] scale-100 opacity-100 border-primary/40 bg-surface/80 shadow-card ring-1 ring-primary/20 sm:h-[30rem]"
+                                        : "h-[20rem] scale-90 opacity-40 border-white/10 bg-white/[0.03] hover:opacity-70 sm:h-[26rem]"
                                     }`}
                       >
                         {/* Brand glow on the active card */}
@@ -361,7 +361,7 @@ function ProfileSelector() {
                         )}
 
                         {/* Country avatar */}
-                        <div className="h-20 w-20 overflow-hidden rounded-2xl border border-white/10">
+                        <div className="h-16 w-16 overflow-hidden rounded-2xl border border-white/10 sm:h-20 sm:w-20">
                           <span
                             className={`fi fis fi-${profile.country?.toLowerCase()} !block !h-full !w-full`}
                             title={profile.country}
@@ -369,8 +369,8 @@ function ProfileSelector() {
                         </div>
 
                         {/* Name + country */}
-                        <div className="mt-6">
-                          <h3 className="text-2xl font-bold text-text leading-tight">
+                        <div className="mt-4 sm:mt-6">
+                          <h3 className="text-xl font-bold text-text leading-tight sm:text-2xl">
                             {profile.profileName}
                           </h3>
                           <p className="mt-1 text-base text-secondary">
@@ -386,7 +386,7 @@ function ProfileSelector() {
                         )}
 
                         {/* Application counts */}
-                        <div className="mt-6 grid grid-cols-2 gap-3">
+                        <div className="mt-4 grid grid-cols-2 gap-3 sm:mt-6">
                           {/* To apply */}
                           <div className="rounded-xl border border-secondary/25 bg-secondary/[0.08] p-3">
                             <div className="flex items-center gap-2">

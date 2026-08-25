@@ -71,21 +71,14 @@ function EditableInfoSection({ application, onSave, isSaving, statusSlot }) {
       {/* Decorative corner glow — reinforces the "featured" hero feel */}
       <div className="pointer-events-none absolute -top-16 -right-10 h-40 w-40 rounded-full bg-primary/20 blur-3xl" />
 
-      <div className="relative flex items-start justify-between gap-4 mb-1">
+      <div className="relative flex flex-col gap-3 mb-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         {!isEditing ? (
           <div className="flex items-center gap-4 min-w-0">
-            <div
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl
-                         bg-gradient-to-br from-primary to-primary/50 text-2xl font-bold text-white
-                         shadow-lg shadow-primary/30 ring-1 ring-white/10"
-            >
-              {application.companyName?.charAt(0)?.toUpperCase() || "?"}
-            </div>
             <div className="min-w-0">
-              <h1 className="truncate text-2xl font-bold tracking-tight text-text">
+              <h1 className="text-2xl font-bold tracking-tight text-text break-words sm:truncate">
                 {application.companyName}
               </h1>
-              <p className="truncate text-secondary text-sm mt-0.5">
+              <p className="text-secondary text-sm mt-0.5 break-words sm:truncate">
                 {application.jobTitle}
               </p>
             </div>

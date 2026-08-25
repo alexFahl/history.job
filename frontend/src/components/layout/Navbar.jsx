@@ -301,6 +301,29 @@ function Navbar() {
 
         {/* Actions pinned to the bottom */}
         <div className="mt-auto pt-6 space-y-2">
+          <a
+            href="/HJ_extension.zip"
+            download
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-primary/30
+                       bg-primary/10 px-3 py-2 text-sm font-medium text-primary
+                       transition-colors duration-150 hover:bg-primary/20"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.7}
+              className="h-4 w-4"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"
+              />
+            </svg>
+            Get the extension
+          </a>
           <Button
             variant="ghost"
             size="sm"

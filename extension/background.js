@@ -1,5 +1,5 @@
-const API_BASE_URL = "http://localhost:5000/api";
-let abortController = null; // Permet de stocker le contrôleur d'annulation
+const API_BASE_URL = "https://history-job.onrender.com";
+let abortController = null;
 
 // Listen for messages from popup.js
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

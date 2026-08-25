@@ -15,6 +15,7 @@ import DocumentsSection from "../components/common/DocumentsSection";
 import NotesSection from "../components/common/NotesSection";
 import Loader from "../components/common/Loader";
 import Button from "../components/common/Button";
+import Modal from "../components/common/Modal";
 import { ChevronLeftIcon, TrashIcon } from "../components/common/icons";
 
 /**
@@ -33,7 +34,8 @@ function ApplicationDetail() {
   const updateMutation = useUpdateApplicationDetail(id, selectedProfile?._id);
   const deleteMutation = useDeleteApplicationDetail(id, selectedProfile?._id);
 
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   const handleStatusChange = (newStatus) => {
     updateMutation.mutate({ status: newStatus });
@@ -52,8 +54,16 @@ function ApplicationDetail() {
   };
 
   const handleDelete = async () => {
-    await deleteMutation.mutateAsync();
-    navigate("/dashboard");
+    setDeleteError("");
+    try {
+      await deleteMutation.mutateAsync();
+      navigate("/dashboard");
+    } catch (err) {
+      setDeleteError(
+        err.response?.data?.message ||
+          "Failed to delete application. Please try again.",
+      );
+    }
   };
 
   return (
@@ -81,35 +91,19 @@ function ApplicationDetail() {
               Back to dashboard
             </Button>
 
-            {application &&
-              (!isDeleting ? (
-                <Button
-                  variant="danger-soft"
-                  rounded="rounded-full"
-                  onClick={() => setIsDeleting(true)}
-                >
-                  <TrashIcon className="h-4 w-4" />
-                  Delete
-                </Button>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="danger"
-                    rounded="rounded-full"
-                    onClick={handleDelete}
-                    disabled={deleteMutation.isPending}
-                  >
-                    {deleteMutation.isPending ? "Deleting…" : "Confirm delete"}
-                  </Button>
-                  <button
-                    type="button"
-                    onClick={() => setIsDeleting(false)}
-                    className="text-secondary hover:text-text text-sm px-2 transition-colors duration-150"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              ))}
+            {application && (
+              <Button
+                variant="danger-soft"
+                rounded="rounded-full"
+                onClick={() => {
+                  setDeleteError("");
+                  setIsDeleteModalOpen(true);
+                }}
+              >
+                <TrashIcon className="h-4 w-4" />
+                Delete
+              </Button>
+            )}
           </div>
 
           {isLoading && <Loader label="Loading application…" />}
@@ -142,7 +136,7 @@ function ApplicationDetail() {
                 isSaving={updateMutation.isPending}
                 title="Description"
                 placeholder="Paste or type the job description here…"
-                rows={11}
+                rows={10}
               />
               <TimelineSection application={application} />
 
@@ -158,6 +152,53 @@ function ApplicationDetail() {
           )}
         </div>
       </main>
+
+      {/* Delete confirmation modal */}
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        title="Delete application"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-text">
+            Are you sure you want to delete{" "}
+            <span className="font-semibold">
+              {application?.jobTitle || "this application"}
+            </span>
+            {application?.companyName ? ` at ${application.companyName}` : ""}?
+          </p>
+
+          <p className="text-accent text-sm bg-accent/10 border border-accent/20 rounded-lg px-4 py-2.5">
+            Warning: this will permanently delete the application, including any
+            uploaded CVs and cover letters. This action cannot be undone.
+          </p>
+
+          {deleteError && (
+            <p className="text-accent text-sm bg-accent/10 border border-accent/20 rounded-lg px-4 py-2.5">
+              {deleteError}
+            </p>
+          )}
+
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              fullWidth
+              onClick={() => setIsDeleteModalOpen(false)}
+              className="text-text"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              fullWidth
+              onClick={handleDelete}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? "Deleting…" : "Delete application"}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
