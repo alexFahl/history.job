@@ -316,9 +316,9 @@ function ProfileSelector() {
               {/* Track viewport — fixed height so the layout below stays put */}
               <div className="h-[26rem] overflow-hidden sm:h-[34rem]">
                 <div
-                  className="flex h-full items-center gap-8 transition-transform duration-500 ease-out"
+                  className="flex h-full items-center gap-8 transition-transform duration-500 ease-out [--card-w:17rem] sm:[--card-w:20rem]"
                   style={{
-                    transform: `translateX(calc(50% - 10rem - ${activeIndex * 22}rem))`,
+                    transform: `translateX(calc(50% - (var(--card-w) / 2) - ${activeIndex} * (var(--card-w) + 2rem)))`,
                   }}
                 >
                   {profiles.map((profile, index) => {
@@ -333,7 +333,7 @@ function ProfileSelector() {
                             ? handleSelectProfile(profile)
                             : setActiveIndex(index)
                         }
-                        className={`relative w-[20rem] shrink-0 rounded-4xl border p-6 text-left
+                        className={`relative w-[var(--card-w)] shrink-0 rounded-4xl border p-6 text-left
                                     transition-all duration-500 cursor-pointer
                                     flex flex-col overflow-hidden sm:p-8
                                     ${
