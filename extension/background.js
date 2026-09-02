@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://history-job.onrender.com";
+const API_BASE_URL = "https://history-job.onrender.com/api";
 let abortController = null;
 
 // Listen for messages from popup.js
